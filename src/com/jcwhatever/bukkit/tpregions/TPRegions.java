@@ -30,7 +30,7 @@ public class TPRegions  extends GenericsPlugin {
     protected void onEnablePlugin() {
         registerListeners();
 
-        _regionManager = new TPRegionManager(getSettings().getNode("regions"));
+        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
     }
 
     @Override
