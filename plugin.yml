@@ -1,8 +1,8 @@
 name: TPRegions
 author: JC The Pants
 main: com.jcwhatever.bukkit.tpregions.TPRegions
-version: 0.4
-depend: [jcGenerics]
+version: 0.0-beta
+depend: [GenericsLib]
 commands:
     tpr:
         description: Base command for TPRegions
