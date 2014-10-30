@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.tpregions.regions;
 import com.jcwhatever.bukkit.generic.player.collections.PlayerSet;
 import com.jcwhatever.bukkit.generic.regions.Region;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import org.bukkit.Bukkit;
@@ -48,37 +49,32 @@ public class TPRegion extends Region implements ITPDestination {
 	private Set<Player> _received;
 	private boolean _isEnabled = true;
 	private float _yaw = 0.0F;
-	Set<BlockState> _portalBlocks = new HashSet<BlockState>();
+	Set<BlockState> _portalBlocks = new HashSet<BlockState>(100);
 	
-	public TPRegion(String name, IDataNode settings) {
-		super(TPRegions.getInstance(), name, settings);
+	public TPRegion(String name, IDataNode dataNode) {
+		super(TPRegions.getInstance(), name, dataNode);
+        
+        PreCon.notNull(dataNode);
 		
 		_received = new PlayerSet();
 	}
 	
 	public void init(TPRegionManager regionManager) {
+
+        //noinspection ConstantConditions
+        _isEnabled = getDataNode().getBoolean("enabled", _isEnabled);
+		_yaw = (float) getDataNode().getDouble("yaw", _yaw);
 		
-		_isEnabled = _dataNode.getBoolean("enabled", _isEnabled);
-		_yaw = (float) _dataNode.getDouble("yaw", _yaw);
-		
-		String dest = _dataNode.getString("destination");
+		String dest = getDataNode().getString("destination");
 		
 		if (dest != null) {
 			
-			Location destLoc = _dataNode.getLocation("destination", null);
+			Location destLoc = getDataNode().getLocation("destination", null);
 			
 			// Destination is location
-			if (destLoc != null) {
-				_destination = DestinationLocation.from(destLoc);
-			}
-			// Destination is region
-			else {
-				TPRegion region = regionManager.getRegion(dest);
-				if (region instanceof ITPDestination) {
-					ITPDestination destination = (ITPDestination)region;
-					_destination = destination;
-				}	
-			}
+            _destination = destLoc != null 
+                    ? DestinationLocation.from(destLoc) 
+                    : regionManager.getRegion(dest);
 		}
 		
 		updatePlayerWatcher();
@@ -114,33 +110,37 @@ public class TPRegion extends Region implements ITPDestination {
 	}
 
 	public void setDestination(ITPDestination destination) {
+
+        if (getDataNode() == null)
+            throw new AssertionError();
+
 		if (destination instanceof TPRegion) {
 			TPRegion region = (TPRegion)destination;
 			_destination = destination;
-			_dataNode.set("destination", region.getName());
+			getDataNode().set("destination", region.getName());
 		}
 		else if (destination instanceof Location) {
 			_destination = destination;
-			_dataNode.set("destination", (Location)destination);
+			getDataNode().set("destination", destination);
 		}
 		else {
-			_dataNode.remove("destination");
+			getDataNode().remove("destination");
 		}
 		
-		_dataNode.saveAsync(null);
+		getDataNode().saveAsync(null);
 		
 		updatePlayerWatcher();
 	}
 	
 	@Override
 	public boolean canDoPlayerEnter(Player p) {
-		if (_destination == null || !_destination.isEnabled())
-			return false;
-		
-		return _isEnabled && !_received.contains(p);
-	}
+        return !(_destination == null || !_destination.isEnabled()) &&
+                _isEnabled && 
+                !_received.contains(p);
+    }
 	
-	public boolean canDoPlayerLeave(Player p) {
+	@Override
+    public boolean canDoPlayerLeave(Player p) {
 		return _destination != null;
 	}
 
@@ -154,7 +154,8 @@ public class TPRegion extends Region implements ITPDestination {
 		_received.remove(p);
 	}
 	
-	public boolean isEnabled() {
+	@Override
+    public boolean isEnabled() {
 		return _isEnabled;
 	}
 	
@@ -164,16 +165,20 @@ public class TPRegion extends Region implements ITPDestination {
 
 	public void setIsEnabled(boolean isEnabled) {
 		_isEnabled = isEnabled;
-		_dataNode.set("enabled", isEnabled);
-		_dataNode.saveAsync(null);
+
+        //noinspection ConstantConditions
+        getDataNode().set("enabled", isEnabled);
+		getDataNode().saveAsync(null);
 		
 		updatePlayerWatcher();
 	}
 	
 	public void setYaw(float yaw) {
 		_yaw = yaw % 360;
-		_dataNode.set("yaw", _yaw);
-		_dataNode.saveAsync(null);
+
+        //noinspection ConstantConditions
+        getDataNode().set("yaw", _yaw);
+		getDataNode().saveAsync(null);
 	}
 
 	
@@ -183,8 +188,8 @@ public class TPRegion extends Region implements ITPDestination {
 	
 	@Override
 	public Location getDestination(TPRegion sender, Player p, float yaw) {
-		if (sender == null || p == null)
-			return null;
+		PreCon.notNull(sender);
+        PreCon.notNull(p);
 
 		Location pLoc = p.getLocation();
 
