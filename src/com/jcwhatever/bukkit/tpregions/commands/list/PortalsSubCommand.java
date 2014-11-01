@@ -29,7 +29,6 @@ import com.jcwhatever.bukkit.generic.commands.ICommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
-import com.jcwhatever.bukkit.generic.messaging.ChatPaginator.PaginatorTemplate;
 import com.jcwhatever.bukkit.generic.utils.TextUtils.FormatTemplate;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.regions.RegionType;
@@ -55,7 +54,7 @@ public class PortalsSubCommand extends AbstractCommand {
 		
 		TPRegionManager regionManager = TPRegions.getInstance().getRegionManager();
 		
-		ChatPaginator pagin = new ChatPaginator(TPRegions.getInstance(), 6, PaginatorTemplate.HEADER, PaginatorTemplate.FOOTER, "Portals");
+		ChatPaginator pagin = new ChatPaginator(TPRegions.getInstance(), 6, "Portals");
 		
 		List<TPRegion> regions = regionManager.getRegions();
 		
