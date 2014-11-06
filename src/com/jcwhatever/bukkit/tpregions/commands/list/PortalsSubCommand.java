@@ -50,7 +50,7 @@ public class PortalsSubCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 		
-		int page = args.getInt("page");
+		int page = args.getInteger("page");
 		
 		TPRegionManager regionManager = TPRegions.getInstance().getRegionManager();
 		
