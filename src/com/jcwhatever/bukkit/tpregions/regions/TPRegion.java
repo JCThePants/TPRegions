@@ -306,9 +306,7 @@ public class TPRegion extends Region implements ITPDestination {
 	}
 	
 	@Override
-	public void dispose() {
-		super.dispose();
-		
+	protected void onDispose() {
 		closePortal();
 	}
 	
