@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.tpregions.commands;
 
-import com.jcwhatever.bukkit.generic.regions.RegionSelection;
+import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
