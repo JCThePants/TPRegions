@@ -56,7 +56,7 @@ public class TPRegion extends Region implements ITPDestination {
         
         PreCon.notNull(dataNode);
 		
-		_received = new PlayerSet();
+		_received = new PlayerSet(TPRegions.getInstance());
 	}
 	
 	public void init(TPRegionManager regionManager) {
