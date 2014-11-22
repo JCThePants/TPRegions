@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.tpregions.commands;
 
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.ICommandInfo;
+import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
@@ -40,7 +40,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@ICommandInfo(
+@CommandInfo(
 		command="set", 
 		staticParams={"regionName", "destName=$location"},
 		usage="/tpr set <regionName> [destName]",
