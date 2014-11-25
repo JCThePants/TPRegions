@@ -133,24 +133,24 @@ public class TPRegion extends Region implements ITPDestination {
 	}
 	
 	@Override
-	public boolean canDoPlayerEnter(Player p) {
+	public boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
         return !(_destination == null || !_destination.isEnabled()) &&
                 _isEnabled && 
                 !_received.contains(p);
     }
 	
 	@Override
-    public boolean canDoPlayerLeave(Player p) {
+    public boolean canDoPlayerLeave(Player p, LeaveRegionReason reason) {
 		return _destination != null;
 	}
 
 	@Override
-	protected void onPlayerEnter (Player p) {
+	protected void onPlayerEnter (Player p, EnterRegionReason reason) {
 		sendPlayer(this, p, _yaw);
 	}
 	
 	@Override
-	protected void onPlayerLeave (Player p) {
+	protected void onPlayerLeave (Player p, LeaveRegionReason reason) {
 		_received.remove(p);
 	}
 	
