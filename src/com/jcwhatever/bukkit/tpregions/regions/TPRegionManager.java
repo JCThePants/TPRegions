@@ -26,7 +26,7 @@ package com.jcwhatever.bukkit.tpregions.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.performance.SingleCache;
-import com.jcwhatever.bukkit.generic.regions.ReadOnlyRegion;
+import com.jcwhatever.bukkit.generic.regions.IRegion;
 import com.jcwhatever.bukkit.generic.storage.BatchOperation;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
@@ -86,10 +86,10 @@ public class TPRegionManager {
 	public TPRegion getRegionAt(Location location) {
 		PreCon.notNull(location);
 		
-		List<ReadOnlyRegion> regions = GenericsLib.getRegionManager().getRegions(location);
+		List<IRegion> regions = GenericsLib.getRegionManager().getRegions(location);
 		
-		for (ReadOnlyRegion region : regions) {
-			if (region.getHandleClass().equals(TPRegion.class)) {
+		for (IRegion region : regions) {
+			if (region.getRegionClass().equals(TPRegion.class)) {
                 return getRegion(region.getName());
 			}
 		}
