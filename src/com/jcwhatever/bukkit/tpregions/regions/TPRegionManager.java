@@ -30,6 +30,7 @@ import com.jcwhatever.bukkit.generic.regions.ReadOnlyRegion;
 import com.jcwhatever.bukkit.generic.storage.BatchOperation;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
+
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 public class TPRegionManager {
 	
@@ -46,7 +48,7 @@ public class TPRegionManager {
 		return _instance;
 	}
 
-	private Map<String, TPRegion> _regionMap = new HashMap<String, TPRegion>();
+	private Map<String, TPRegion> _regionMap = new HashMap<>(50);
 	private IDataNode _settings;
 	private SingleCache<RegionType, List<TPRegion>> _regionsByTypeCache = new SingleCache<RegionType, List<TPRegion>>();
 
@@ -68,7 +70,7 @@ public class TPRegionManager {
 		if (_regionsByTypeCache.keyEquals(type))
 			return new ArrayList<TPRegion>(_regionsByTypeCache.getValue());
 		
-		List<TPRegion> regions = new ArrayList<TPRegion>();
+		List<TPRegion> regions = new ArrayList<>(20);
 		
 		for (TPRegion region : getRegions()) {
 			if (region.getType() == type)
@@ -79,11 +81,12 @@ public class TPRegionManager {
 		
 		return regions;
 	}
-	
+
+	@Nullable
 	public TPRegion getRegionAt(Location location) {
 		PreCon.notNull(location);
 		
-		Set<ReadOnlyRegion> regions = GenericsLib.getRegionManager().getRegions(location);
+		List<ReadOnlyRegion> regions = GenericsLib.getRegionManager().getRegions(location);
 		
 		for (ReadOnlyRegion region : regions) {
 			if (region.getHandleClass().equals(TPRegion.class)) {

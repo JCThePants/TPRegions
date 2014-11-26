@@ -30,6 +30,8 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
+import com.sun.istack.internal.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -109,7 +111,7 @@ public class TPRegion extends Region implements ITPDestination {
 		
 	}
 
-	public void setDestination(ITPDestination destination) {
+	public void setDestination(@Nullable ITPDestination destination) {
 
         if (getDataNode() == null)
             throw new AssertionError();
