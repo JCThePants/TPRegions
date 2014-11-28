@@ -30,7 +30,6 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
-import com.sun.istack.internal.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -44,6 +43,7 @@ import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 public class TPRegion extends Region implements ITPDestination {
 
