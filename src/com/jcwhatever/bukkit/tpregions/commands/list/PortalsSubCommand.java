@@ -65,7 +65,7 @@ public class PortalsSubCommand extends AbstractCommand {
 			pagin.add(region.getName(), "Destination: " + (region.getDestination() != null ? region.getDestination() : "none"));
 		}
 		
-		pagin.show(sender, page, FormatTemplate.ITEM_DESCRIPTION);
+		pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
 	}
 }
 
