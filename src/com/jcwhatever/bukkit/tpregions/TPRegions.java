@@ -63,10 +63,10 @@ public class TPRegions  extends GenericsPlugin {
     @Override
     protected void onEnablePlugin() {
 
+        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
+
         registerCommands(new CommandHandler());
         registerEventListeners(new BukkitEventListener());
-
-        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
     }
 
     @Override
