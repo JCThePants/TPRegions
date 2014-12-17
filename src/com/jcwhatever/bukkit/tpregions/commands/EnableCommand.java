@@ -36,31 +36,31 @@ import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
-		command="enable",
-		staticParams={"regionName"},
-		usage="/tpr enable <regionName>",
-		description="Enables a teleport region or portal.")
+        command="enable",
+        staticParams={"regionName"},
+        usage="/tpr enable <regionName>",
+        description="Enables a teleport region or portal.")
 
 public class EnableCommand extends AbstractCommand {
 
-	@Localizable static final String _NOT_FOUND = "A teleport region or portal with the name '{0: region name}' was not found.";
-	@Localizable static final String _ENABLED = "Teleport region '{0: region name}' {GREEN}Enabled.";
+    @Localizable static final String _NOT_FOUND = "A teleport region or portal with the name '{0: region name}' was not found.";
+    @Localizable static final String _ENABLED = "Teleport region '{0: region name}' {GREEN}Enabled.";
 
-	@Override
-	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    @Override
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
-		String regionName = args.getName("regionName", 32);
+        String regionName = args.getName("regionName", 32);
 
-		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-		if (region == null) {
-			tellError(sender, Lang.get(_NOT_FOUND, regionName));
-			return; // finish
-		}
+        TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
+        if (region == null) {
+            tellError(sender, Lang.get(_NOT_FOUND, regionName));
+            return; // finish
+        }
 
-		region.setIsEnabled(true);
+        region.setIsEnabled(true);
 
-		tellSuccess(sender, Lang.get(_ENABLED, regionName));
-	}
+        tellSuccess(sender, Lang.get(_ENABLED, regionName));
+    }
 }
 
 

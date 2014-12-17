@@ -37,33 +37,33 @@ import org.bukkit.command.CommandSender;
 
 
 @CommandInfo(
-		command="del",
-		staticParams={"regionName"},
-		usage="/tpr del <regionName>",
-		description="Remove a teleport region or portal.")
+        command="del",
+        staticParams={"regionName"},
+        usage="/tpr del <regionName>",
+        description="Remove a teleport region or portal.")
 
 public class DelCommand extends AbstractCommand {
 
-	@Localizable static final String _NOT_FOUND = "A teleport region or portal with the name '{0: region name}' was not found.";
-	@Localizable static final String _FAILED = "Failed to delete region or portal named '{0: region name}'.";
-	@Localizable static final String _SUCCESS = "Teleport region/portal '{0: region name}' deleted.";
+    @Localizable static final String _NOT_FOUND = "A teleport region or portal with the name '{0: region name}' was not found.";
+    @Localizable static final String _FAILED = "Failed to delete region or portal named '{0: region name}'.";
+    @Localizable static final String _SUCCESS = "Teleport region/portal '{0: region name}' deleted.";
 
-	@Override
-	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    @Override
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
-		String regionName = args.getName("regionName", 32);
+        String regionName = args.getName("regionName", 32);
 
-		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-		if (region == null) {
-			tellError(sender, Lang.get(_NOT_FOUND, regionName));
-			return; // finish
-		}
+        TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
+        if (region == null) {
+            tellError(sender, Lang.get(_NOT_FOUND, regionName));
+            return; // finish
+        }
 
-		if (!TPRegions.getRegionManager().remove(regionName)) {
-			tellError(sender, Lang.get(_FAILED, regionName));
-		}
+        if (!TPRegions.getRegionManager().remove(regionName)) {
+            tellError(sender, Lang.get(_FAILED, regionName));
+        }
 
-		tellSuccess(sender, Lang.get(_SUCCESS, regionName));
-	}
+        tellSuccess(sender, Lang.get(_SUCCESS, regionName));
+    }
 }
 

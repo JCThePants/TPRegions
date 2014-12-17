@@ -40,43 +40,43 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 @CommandInfo(
-		command="list",
-		staticParams={"page=1"},
-		usage="/tpr list [page]",
-		description="List all regions and portals.")
+        command="list",
+        staticParams={"page=1"},
+        usage="/tpr list [page]",
+        description="List all regions and portals.")
 
 public class ListCommand extends AbstractCommand {
 
-	@Localizable static final String _PAGINATOR_TITLE = "Teleport Regions/Portals";
-	@Localizable static final String _LIST_ITEM_DESCRIPTION = "Type: {0: type}, destination: {1: destination name}";
-	@Localizable static final String _LABEL_NOT_SET = "not set";
+    @Localizable static final String _PAGINATOR_TITLE = "Teleport Regions/Portals";
+    @Localizable static final String _LIST_ITEM_DESCRIPTION = "Type: {0: type}, destination: {1: destination name}";
+    @Localizable static final String _LABEL_NOT_SET = "not set";
 
-	public ListCommand () {
-		super();
+    public ListCommand () {
+        super();
 
-		registerSubCommand(PortalsSubCommand.class);
-		registerSubCommand(RegionsSubCommand.class);
-	}
+        registerSubCommand(PortalsSubCommand.class);
+        registerSubCommand(RegionsSubCommand.class);
+    }
 
-	@Override
-	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    @Override
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
-		int page = args.getInteger("page");
+        int page = args.getInteger("page");
 
-		ChatPaginator pagin = new ChatPaginator(TPRegions.getPlugin(), 6, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = new ChatPaginator(TPRegions.getPlugin(), 6, Lang.get(_PAGINATOR_TITLE));
 
-		List<TPRegion> regions = TPRegions.getRegionManager().getRegions();
+        List<TPRegion> regions = TPRegions.getRegionManager().getRegions();
 
-		for (TPRegion region : regions) {
-			if (region == null)
-				continue;
-			pagin.add(region.getName(),
-					Lang.get(_LIST_ITEM_DESCRIPTION, region.getType().name(),
-							(region.getDestination() != null ? region.getDestination() : Lang.get(_LABEL_NOT_SET))));
-		}
+        for (TPRegion region : regions) {
+            if (region == null)
+                continue;
+            pagin.add(region.getName(),
+                    Lang.get(_LIST_ITEM_DESCRIPTION, region.getType().name(),
+                            (region.getDestination() != null ? region.getDestination() : Lang.get(_LABEL_NOT_SET))));
+        }
 
-		pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
-	}
+        pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
+    }
 }
 
 

@@ -30,18 +30,18 @@ import com.jcwhatever.bukkit.tpregions.commands.list.ListCommand;
 
 public class CommandHandler extends AbstractCommandHandler {
 
-	public CommandHandler() {
-		super(TPRegions.getPlugin());
-	}
+    public CommandHandler() {
+        super(TPRegions.getPlugin());
+    }
 
-	@Override
-	protected void registerCommands() {
-		this.registerCommand(CreateCommand.class);
-		this.registerCommand(DelCommand.class);
-		this.registerCommand(DisableCommand.class);
-		this.registerCommand(EnableCommand.class);
-		this.registerCommand(ListCommand.class);
-		this.registerCommand(SetCommand.class);
-		this.registerCommand(SetYawCommand.class);
-	}
+    @Override
+    protected void registerCommands() {
+        this.registerCommand(CreateCommand.class);
+        this.registerCommand(DelCommand.class);
+        this.registerCommand(DisableCommand.class);
+        this.registerCommand(EnableCommand.class);
+        this.registerCommand(ListCommand.class);
+        this.registerCommand(SetCommand.class);
+        this.registerCommand(SetYawCommand.class);
+    }
 }

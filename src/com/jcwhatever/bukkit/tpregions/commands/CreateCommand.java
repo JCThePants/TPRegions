@@ -40,49 +40,49 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @CommandInfo(
-		command="create",
-		staticParams = {"regionName"},
-		usage = "/tpr create <regionName>",
-		description="Create a teleport region or portal from the current World Edit selection. " +
-				"Note that portals must be flat vertically or horizontally.")
+        command="create",
+        staticParams = {"regionName"},
+        usage = "/tpr create <regionName>",
+        description="Create a teleport region or portal from the current World Edit selection. " +
+                "Note that portals must be flat vertically or horizontally.")
 
 public class CreateCommand extends AbstractCommand {
 
-	@Localizable static final String _ALREADY_EXISTS = "There is already a teleport region or portal with the " +
-			"name '{0 : region name}'.";
-	@Localizable static final String _FAILED = "Failed to create a new region.";
-	@Localizable static final String _SUCCESS = "New teleport region named '{0: region name}' created. " +
-			"Set the destination using '/tpr set ?'";
+    @Localizable static final String _ALREADY_EXISTS = "There is already a teleport region or portal with the " +
+            "name '{0 : region name}'.";
+    @Localizable static final String _FAILED = "Failed to create a new region.";
+    @Localizable static final String _SUCCESS = "New teleport region named '{0: region name}' created. " +
+            "Set the destination using '/tpr set ?'";
 
-	@Override
-	public void execute(CommandSender sender, CommandArguments args)
-			throws InvalidValueException, InvalidCommandSenderException {
+    @Override
+    public void execute(CommandSender sender, CommandArguments args)
+            throws InvalidValueException, InvalidCommandSenderException {
 
-		InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
-				"Console cannot select region.");
+        InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
+                "Console cannot select region.");
 
-		if (!isWorldEditInstalled(sender))
-			return; // finish
+        if (!isWorldEditInstalled(sender))
+            return; // finish
 
-		String regionName = args.getName("regionName", 32);
+        String regionName = args.getName("regionName", 32);
 
-		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-		if (region != null) {
-			tellError(sender, Lang.get(_ALREADY_EXISTS, regionName));
-			return; // finish
-		}
+        TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
+        if (region != null) {
+            tellError(sender, Lang.get(_ALREADY_EXISTS, regionName));
+            return; // finish
+        }
 
-		RegionSelection sel = getWorldEditSelection((Player)sender);
-		if (sel == null)
-			return; // finish
+        RegionSelection sel = getWorldEditSelection((Player)sender);
+        if (sel == null)
+            return; // finish
 
-		region = TPRegions.getRegionManager().add(regionName, sel.getP1(), sel.getP2());
+        region = TPRegions.getRegionManager().add(regionName, sel.getP1(), sel.getP2());
 
-		if (region == null) {
-			tellError(sender, Lang.get(_FAILED));
-			return; // finish
-		}
+        if (region == null) {
+            tellError(sender, Lang.get(_FAILED));
+            return; // finish
+        }
 
-		tellSuccess(sender, Lang.get(_SUCCESS, regionName));
-	}
+        tellSuccess(sender, Lang.get(_SUCCESS, regionName));
+    }
 }

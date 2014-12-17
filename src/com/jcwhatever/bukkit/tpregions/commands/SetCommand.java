@@ -42,59 +42,59 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @CommandInfo(
-		command="set",
-		staticParams={"regionName", "destination=$location"},
-		usage="/tpr set <regionName> [destination]",
-		description="Sets the destination of a TPRegion to the players current location or the specified region.")
+        command="set",
+        staticParams={"regionName", "destination=$location"},
+        usage="/tpr set <regionName> [destination]",
+        description="Sets the destination of a TPRegion to the players current location or the specified region.")
 
 public class SetCommand extends AbstractCommand {
 
-	@Localizable static final String _NOT_FOUND = "Failed to find a teleport region named '{0: region name}'.";
-	@Localizable static final String _SET_LOCATION = "Teleport region '{0: region name}' destination set to location:";
-	@Localizable static final String _SET_REGION = "Teleport region '{0: region name}' destination set to region '{1: destination name}'.";
+    @Localizable static final String _NOT_FOUND = "Failed to find a teleport region named '{0: region name}'.";
+    @Localizable static final String _SET_LOCATION = "Teleport region '{0: region name}' destination set to location:";
+    @Localizable static final String _SET_REGION = "Teleport region '{0: region name}' destination set to region '{1: destination name}'.";
 
-	@Override
-	public void execute(CommandSender sender, CommandArguments args)
-			throws InvalidValueException, InvalidCommandSenderException {
+    @Override
+    public void execute(CommandSender sender, CommandArguments args)
+            throws InvalidValueException, InvalidCommandSenderException {
 
-		String regionName = args.getName("regionName", 32);
+        String regionName = args.getName("regionName", 32);
 
-		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-		if (region == null) {
-			tellError(sender, Lang.get(_NOT_FOUND, regionName));
-			return; // finish
-		}
+        TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
+        if (region == null) {
+            tellError(sender, Lang.get(_NOT_FOUND, regionName));
+            return; // finish
+        }
 
-		// Portal Location
-		if (args.getString("destination").equals("$location")) {
+        // Portal Location
+        if (args.getString("destination").equals("$location")) {
 
-			InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
-					"Console has no location.");
+            InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
+                    "Console has no location.");
 
-			Player p = (Player)sender;
-			Location location = p.getLocation();
+            Player p = (Player)sender;
+            Location location = p.getLocation();
 
-			region.setDestination(DestinationLocation.from(location));
+            region.setDestination(DestinationLocation.from(location));
 
-			tellSuccess(sender, Lang.get(_SET_LOCATION, regionName));
-			tell(sender, TextUtils.formatLocation(location, true));
-		}
-		// Region Destination
-		else {
+            tellSuccess(sender, Lang.get(_SET_LOCATION, regionName));
+            tell(sender, TextUtils.formatLocation(location, true));
+        }
+        // Region Destination
+        else {
 
-			String name = args.getName("destination", 32);
+            String name = args.getName("destination", 32);
 
-			TPRegion destination = TPRegions.getRegionManager().getRegion(name);
-			if (destination == null) {
-				tellError(sender, Lang.get(_NOT_FOUND, name));
-				return; // finish
-			}
+            TPRegion destination = TPRegions.getRegionManager().getRegion(name);
+            if (destination == null) {
+                tellError(sender, Lang.get(_NOT_FOUND, name));
+                return; // finish
+            }
 
-			region.setDestination(destination);
+            region.setDestination(destination);
 
-			tellSuccess(sender, Lang.get(_SET_REGION, region.getName(), destination.getName()));
-		}
-	}
+            tellSuccess(sender, Lang.get(_SET_REGION, region.getName(), destination.getName()));
+        }
+    }
 
 }
 

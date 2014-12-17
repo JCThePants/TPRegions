@@ -37,70 +37,70 @@ import javax.annotation.Nullable;
  */
 public class DestinationLocation extends Location implements ITPDestination {
 
-	/**
-	 * Convert a {@code Location} object to a new {@code DestinationLocation}.
-	 *
-	 * @param location  The location to convert.
-	 */
-	public static DestinationLocation from(Location location) {
-		return new DestinationLocation(location.getWorld(),
-				location.getX(), location.getY(), location.getZ(),
-				location.getYaw(), location.getPitch());
-	}
+    /**
+     * Convert a {@code Location} object to a new {@code DestinationLocation}.
+     *
+     * @param location  The location to convert.
+     */
+    public static DestinationLocation from(Location location) {
+        return new DestinationLocation(location.getWorld(),
+                location.getX(), location.getY(), location.getZ(),
+                location.getYaw(), location.getPitch());
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param world  The location world.
-	 * @param x      The location X coordinates.
-	 * @param y      The location Y coordinates.
-	 * @param z      The location Z coordinates.
-	 */
-	public DestinationLocation(World world, double x, double y, double z) {
-		super(world, x, y, z);
-	}
+    /**
+     * Constructor.
+     *
+     * @param world  The location world.
+     * @param x      The location X coordinates.
+     * @param y      The location Y coordinates.
+     * @param z      The location Z coordinates.
+     */
+    public DestinationLocation(World world, double x, double y, double z) {
+        super(world, x, y, z);
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param world  The location world.
-	 * @param x      The location X coordinates.
-	 * @param y      The location Y coordinates.
-	 * @param z      The location Z coordinates.
-	 * @param yaw    The yaw angle.
-	 * @param pitch  The pitch angle.
-	 */
-	public DestinationLocation(World world, double x, double y, double z, float yaw, float pitch) {
-		super(world, x, y, z, yaw, pitch);
-	}
+    /**
+     * Constructor.
+     *
+     * @param world  The location world.
+     * @param x      The location X coordinates.
+     * @param y      The location Y coordinates.
+     * @param z      The location Z coordinates.
+     * @param yaw    The yaw angle.
+     * @param pitch  The pitch angle.
+     */
+    public DestinationLocation(World world, double x, double y, double z, float yaw, float pitch) {
+        super(world, x, y, z, yaw, pitch);
+    }
 
-	/**
-	 * Determine if the location is enabled as
-	 * a teleport destination.
-	 */
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    /**
+     * Determine if the location is enabled as
+     * a teleport destination.
+     */
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-	/**
-	 * Teleport a player to the {@code DestinationLocation}.
-	 *
-	 * @param sender  Optional destination that is forwarding the player.
-	 * @param p       The player to teleport.
-	 * @param yaw     The yaw adjustment. Adjust the players yaw when they are teleported.
-	 */
-	@Override
-	public void teleport(@Nullable ITPDestination sender, Player p, float yaw) {
-		Location destination = new Location(getWorld(),
-				getX(), getY(), getZ(),
-				getYaw(), getPitch());
+    /**
+     * Teleport a player to the {@code DestinationLocation}.
+     *
+     * @param sender  Optional destination that is forwarding the player.
+     * @param p       The player to teleport.
+     * @param yaw     The yaw adjustment. Adjust the players yaw when they are teleported.
+     */
+    @Override
+    public void teleport(@Nullable ITPDestination sender, Player p, float yaw) {
+        Location destination = new Location(getWorld(),
+                getX(), getY(), getZ(),
+                getYaw(), getPitch());
 
-		p.teleport(destination);
-	}
+        p.teleport(destination);
+    }
 
-	@Override
-	public String toString() {
-		return TextUtils.formatLocation(this, true);
-	}
+    @Override
+    public String toString() {
+        return TextUtils.formatLocation(this, true);
+    }
 }

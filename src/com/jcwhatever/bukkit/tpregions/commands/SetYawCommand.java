@@ -36,32 +36,32 @@ import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
-		command="setyaw",
-		staticParams={"regionName", "yaw"},
-		usage="/tpr setyaw <regionName> <yaw>",
-		description="Make adjustments to the players yaw angle when teleported from the specified region.")
+        command="setyaw",
+        staticParams={"regionName", "yaw"},
+        usage="/tpr setyaw <regionName> <yaw>",
+        description="Make adjustments to the players yaw angle when teleported from the specified region.")
 
 public class SetYawCommand extends AbstractCommand {
 
-	@Localizable static final String _NOT_FOUND = "A teleport region with the name '{0: region name}' was not found.";
-	@Localizable static final String _SUCCESS = "Teleport region '{0: region name}' yaw adjustment set to {1: yaw} degrees.";
+    @Localizable static final String _NOT_FOUND = "A teleport region with the name '{0: region name}' was not found.";
+    @Localizable static final String _SUCCESS = "Teleport region '{0: region name}' yaw adjustment set to {1: yaw} degrees.";
 
-	@Override
-	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
+    @Override
+    public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 
-		String regionName = args.getName("regionName", 32);
-		float yaw = args.getFloat("yaw");
+        String regionName = args.getName("regionName", 32);
+        float yaw = args.getFloat("yaw");
 
-		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-		if (region == null) {
-			tellError(sender, Lang.get(_NOT_FOUND, regionName));
-			return; // finish
-		}
+        TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
+        if (region == null) {
+            tellError(sender, Lang.get(_NOT_FOUND, regionName));
+            return; // finish
+        }
 
-		region.setYaw(yaw);
+        region.setYaw(yaw);
 
-		tellSuccess(sender, Lang.get(_SUCCESS, regionName, yaw));
-	}
+        tellSuccess(sender, Lang.get(_SUCCESS, regionName, yaw));
+    }
 
 }
 

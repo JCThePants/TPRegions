@@ -32,46 +32,46 @@ import org.bukkit.ChatColor;
 
 public class TPRegions  extends GenericsPlugin {
 
-	private static TPRegions _instance;
+    private static TPRegions _instance;
 
-	private TPRegionManager _regionManager;
+    private TPRegionManager _regionManager;
 
-	public static TPRegions getPlugin() {
-		return _instance;
-	}
+    public static TPRegions getPlugin() {
+        return _instance;
+    }
 
-	public static TPRegionManager getRegionManager() {
-		return _instance._regionManager;
-	}
+    public static TPRegionManager getRegionManager() {
+        return _instance._regionManager;
+    }
 
-	public TPRegions() {
-		super();
+    public TPRegions() {
+        super();
 
-		_instance = this;
-	}
+        _instance = this;
+    }
 
-	@Override
-	public String getChatPrefix() {
-		return ChatColor.GRAY + "[TPR] " + ChatColor.RESET;
-	}
+    @Override
+    public String getChatPrefix() {
+        return ChatColor.GRAY + "[TPR] " + ChatColor.RESET;
+    }
 
-	@Override
-	public String getConsolePrefix() {
-		return "[TPR] ";
-	}
+    @Override
+    public String getConsolePrefix() {
+        return "[TPR] ";
+    }
 
-	@Override
-	protected void onEnablePlugin() {
+    @Override
+    protected void onEnablePlugin() {
 
-		registerCommands(new CommandHandler());
-		registerEventListeners(new BukkitEventListener());
+        registerCommands(new CommandHandler());
+        registerEventListeners(new BukkitEventListener());
 
-		_regionManager = new TPRegionManager(getDataNode().getNode("regions"));
-	}
+        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
+    }
 
-	@Override
-	protected void onDisablePlugin() {
-		_regionManager.dispose();
-	}
+    @Override
+    protected void onDisablePlugin() {
+        _regionManager.dispose();
+    }
 }
 
