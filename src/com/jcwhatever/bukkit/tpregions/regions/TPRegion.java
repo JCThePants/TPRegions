@@ -26,7 +26,9 @@ package com.jcwhatever.bukkit.tpregions.regions;
 
 import com.jcwhatever.bukkit.generic.player.collections.PlayerSet;
 import com.jcwhatever.bukkit.generic.regions.Region;
+import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
+import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
@@ -85,31 +87,6 @@ public class TPRegion extends Region implements ITPDestination {
 	public ITPDestination getDestination () {
 		return _destination;
 	}
-	
-	private void sendPlayer(TPRegion sender, final Player p, float yaw) {
-		
-		final Location destination = _destination.getDestination(sender, p, yaw);
-		if (destination == null)
-			return;
-		
-		if (_destination != null)
-			_received.add(p);
-		
-		final GameMode gm = p.getGameMode();
-		final Vector v = p.getVelocity();
-		
-		Bukkit.getScheduler().runTaskLater(TPRegions.getInstance(), new Runnable() {
-
-			@Override
-			public void run() {
-				p.teleport(destination);
-				p.setGameMode(gm);
-				p.setVelocity(v);
-			}
-			
-		}, 1);
-		
-	}
 
 	public void setDestination(@Nullable ITPDestination destination) {
 
@@ -148,7 +125,7 @@ public class TPRegion extends Region implements ITPDestination {
 
 	@Override
 	protected void onPlayerEnter (Player p, EnterRegionReason reason) {
-		sendPlayer(this, p, _yaw);
+		_destination.send(this, p, _yaw);
 	}
 	
 	@Override
@@ -187,25 +164,33 @@ public class TPRegion extends Region implements ITPDestination {
 	/*
 	 * ITPDestination implementation
 	 */
-	
+
 	@Override
-	public Location getDestination(TPRegion sender, Player p, float yaw) {
-		PreCon.notNull(sender);
-        PreCon.notNull(p);
+	public void send(@Nullable ITPDestination sender, final Player p, float yaw) {
 
-		Location pLoc = p.getLocation();
+		if (_received.contains(p))
+			return;
 
-		double x = pLoc.getX() - sender.getXStart();
-		double y = pLoc.getY() - sender.getYStart();
-		double z = pLoc.getZ() - sender.getZStart();
+		final Location destination = getDestination(sender, p, yaw);
+		if (destination == null)
+			return;
 
-		double dx = getXStart() + x;
-		double dy = getYStart() + y;
-		double dz = getZStart() + z;
+		_received.add(p);
 
-		float dyaw = (pLoc.getYaw() + _yaw + yaw) % 360; 
+		final GameMode gm = p.getGameMode();
+		final Vector v = p.getVelocity();
 
-		return new Location(getWorld(), dx, dy, dz, dyaw, pLoc.getPitch());
+		Bukkit.getScheduler().runTaskLater(TPRegions.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+				p.teleport(destination);
+				p.setGameMode(gm);
+				p.setVelocity(v);
+			}
+
+		}, 1);
+
 	}
 
 	public RegionType getType() {
@@ -304,6 +289,45 @@ public class TPRegion extends Region implements ITPDestination {
 		}
 		else {
 			closePortal();
+		}
+	}
+
+	@Nullable
+	private Location getDestination(@Nullable ITPDestination sender, Player p, float yaw) {
+		PreCon.notNull(sender);
+		PreCon.notNull(p);
+
+		if (sender instanceof IRegionSelection) {
+			IRegionSelection region = (IRegionSelection)sender;
+
+			Location localCenter = getCenter();
+			if (localCenter == null)
+				return null;
+
+			Location senderCenter = region.getCenter();
+
+			Location pLoc = Float.compare(yaw, 0F) == 0
+					? p.getLocation()
+					: LocationUtils.rotate(senderCenter, p.getLocation(), yaw);
+
+			double x = pLoc.getX() - senderCenter.getX();
+			double y = pLoc.getY() - senderCenter.getY();
+			double z = pLoc.getZ() - senderCenter.getZ();
+
+			double dx = localCenter.getX() + x;
+			double dy = localCenter.getY() + y;
+			double dz = localCenter.getZ() + z;
+
+			return new Location(getWorld(), dx, dy, dz, pLoc.getYaw(), pLoc.getPitch());
+		}
+		else {
+
+			Location center = getCenter();
+			if (center == null)
+				return null;
+
+			return new Location(getWorld(), center.getX(), getYStart(), center.getZ(),
+					p.getLocation().getYaw() + yaw, p.getLocation().getPitch());
 		}
 	}
 	

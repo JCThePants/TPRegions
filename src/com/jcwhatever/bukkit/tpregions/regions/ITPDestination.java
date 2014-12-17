@@ -24,13 +24,13 @@
 
 package com.jcwhatever.bukkit.tpregions.regions;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 
 public interface ITPDestination {
 	
 	public boolean isEnabled();
 	
-	public Location getDestination(TPRegion sender, Player p, float yaw);
-	
+	public void send(@Nullable ITPDestination sender, Player p, float yaw);
 }

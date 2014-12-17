@@ -26,10 +26,12 @@ package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.tpregions.regions.ITPDestination;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 
 public class DestinationLocation extends Location implements ITPDestination {
 	
@@ -51,10 +53,14 @@ public class DestinationLocation extends Location implements ITPDestination {
 	}
 
 	@Override
-	public Location getDestination(TPRegion sender, Player p, float yaw) {
-		return new Location(this.getWorld(), this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch());
+	public void send(@Nullable ITPDestination sender, Player p, float yaw) {
+		Location destination = new Location(getWorld(),
+				getX(), getY(), getZ(),
+				getYaw(), getPitch());
+
+		p.teleport(destination);
 	}
-	
+
 	@Override
 	public String toString() {
 		return TextUtils.formatLocation(this, true);
