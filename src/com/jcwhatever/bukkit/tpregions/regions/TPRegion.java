@@ -31,6 +31,7 @@ import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
+import com.jcwhatever.bukkit.tpregions.ITPDestination;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 
 import org.bukkit.Bukkit;
@@ -47,6 +48,16 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+/**
+ * A teleport region.
+ *
+ * <p>If the sending {@code ITPDestination} is a {@code IRegionSelection}, the player
+ * is teleported to the coordinates that are the same as the {@code TPRegion} coordinates, relative to
+ * the regions center.</p>
+ *
+ * <p>Where player Yaw is modified, the players yaw is rotated and the coordinates are rotated
+ * around the regions center point.</p>
+ */
 public class TPRegion extends Region implements ITPDestination {
 
 	private ITPDestination _destination;
@@ -54,15 +65,29 @@ public class TPRegion extends Region implements ITPDestination {
 	private boolean _isEnabled = true;
 	private float _yaw = 0.0F;
 	Set<BlockState> _portalBlocks = new HashSet<BlockState>(100);
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param name      The regions name.
+	 * @param dataNode  The regions data node.
+	 */
 	public TPRegion(String name, IDataNode dataNode) {
-		super(TPRegions.getInstance(), name, dataNode);
+		super(TPRegions.getPlugin(), name, dataNode);
         
         PreCon.notNull(dataNode);
 		
-		_received = new PlayerSet(TPRegions.getInstance());
+		_received = new PlayerSet(TPRegions.getPlugin());
 	}
-	
+
+	/**
+	 * Initializes the region.
+	 *
+	 * <p>Used to load all regions before initializing. Regions may be
+	 * interdependent, so they all must be loaded first.</p>
+	 *
+	 * @param regionManager  The parent region manager.
+	 */
 	public void init(TPRegionManager regionManager) {
 
         //noinspection ConstantConditions
@@ -84,14 +109,74 @@ public class TPRegion extends Region implements ITPDestination {
 		updatePlayerWatcher();
 	}
 
+	/**
+	 * Determine if the region represents a visible portal or is
+	 * an invisible region.
+	 */
+	public RegionType getType() {
+		return isFlatHorizontal() || isFlatVertical() ? RegionType.PORTAL : RegionType.REGION;
+	}
+
+	/**
+	 * Determine if the region is enabled.
+	 */
+	@Override
+    public boolean isEnabled() {
+		return _isEnabled;
+	}
+
+	/**
+	 * Set the enabled state.
+	 *
+	 * @param isEnabled  True to enable teleport.
+	 */
+	public void setIsEnabled(boolean isEnabled) {
+		_isEnabled = isEnabled;
+
+		//noinspection ConstantConditions
+		getDataNode().set("enabled", isEnabled);
+		getDataNode().saveAsync(null);
+
+		updatePlayerWatcher();
+	}
+
+	/**
+	 * Get the yaw angle adjustment on outgoing teleports.
+	 */
+	public float getYaw() {
+		return _yaw;
+	}
+
+	/**
+	 * Set the yaw angle adjustment on outgoing teleports.
+	 *
+	 * @param yaw  The yaw angle.
+	 */
+	public void setYaw(float yaw) {
+		_yaw = yaw % 360;
+
+		//noinspection ConstantConditions
+        getDataNode().set("yaw", _yaw);
+		getDataNode().saveAsync(null);
+	}
+
+	/**
+	 * Get the teleport destination.
+	 */
+	@Nullable
 	public ITPDestination getDestination () {
 		return _destination;
 	}
 
+	/**
+	 * Set the teleport destination.
+	 *
+	 * @param destination  The teleport destination.
+	 */
 	public void setDestination(@Nullable ITPDestination destination) {
 
-        if (getDataNode() == null)
-            throw new AssertionError();
+		if (getDataNode() == null)
+			throw new AssertionError();
 
 		if (destination instanceof TPRegion) {
 			TPRegion region = (TPRegion)destination;
@@ -105,68 +190,22 @@ public class TPRegion extends Region implements ITPDestination {
 		else {
 			getDataNode().remove("destination");
 		}
-		
+
 		getDataNode().saveAsync(null);
-		
+
 		updatePlayerWatcher();
 	}
-	
-	@Override
-	public boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
-        return !(_destination == null || !_destination.isEnabled()) &&
-                _isEnabled && 
-                !_received.contains(p);
-    }
-	
-	@Override
-    public boolean canDoPlayerLeave(Player p, LeaveRegionReason reason) {
-		return _destination != null;
-	}
 
-	@Override
-	protected void onPlayerEnter (Player p, EnterRegionReason reason) {
-		_destination.send(this, p, _yaw);
-	}
-	
-	@Override
-	protected void onPlayerLeave (Player p, LeaveRegionReason reason) {
-		_received.remove(p);
-	}
-	
-	@Override
-    public boolean isEnabled() {
-		return _isEnabled;
-	}
-	
-	public float getYaw() {
-		return _yaw;
-	}
 
-	public void setIsEnabled(boolean isEnabled) {
-		_isEnabled = isEnabled;
-
-        //noinspection ConstantConditions
-        getDataNode().set("enabled", isEnabled);
-		getDataNode().saveAsync(null);
-		
-		updatePlayerWatcher();
-	}
-	
-	public void setYaw(float yaw) {
-		_yaw = yaw % 360;
-
-        //noinspection ConstantConditions
-        getDataNode().set("yaw", _yaw);
-		getDataNode().saveAsync(null);
-	}
-
-	
-	/*
-	 * ITPDestination implementation
+	/**
+	 * Send a player to the {@code TPRegion} destination.
+	 *
+	 * @param sender  The {@code ITPDestination} that the player is being received from.
+	 * @param p       The player to teleport.
+	 * @param yaw     The desired yaw adjustment.
 	 */
-
 	@Override
-	public void send(@Nullable ITPDestination sender, final Player p, float yaw) {
+	public void teleport(@Nullable ITPDestination sender, final Player p, float yaw) {
 
 		if (_received.contains(p))
 			return;
@@ -180,7 +219,7 @@ public class TPRegion extends Region implements ITPDestination {
 		final GameMode gm = p.getGameMode();
 		final Vector v = p.getVelocity();
 
-		Bukkit.getScheduler().runTaskLater(TPRegions.getInstance(), new Runnable() {
+		Bukkit.getScheduler().runTaskLater(TPRegions.getPlugin(), new Runnable() {
 
 			@Override
 			public void run() {
@@ -193,16 +232,52 @@ public class TPRegion extends Region implements ITPDestination {
 
 	}
 
-	public RegionType getType() {
-		return isFlatHorizontal() || isFlatVertical() ? RegionType.PORTAL : RegionType.REGION;
-	}
-	
+	@Override
 	public String toString() {
 		return getName();
 	}
-	
-	public boolean canBePortal() {
-		return isFlatHorizontal() || isFlatVertical();
+
+	/**
+	 * Determine if the region can handle a player entering.
+	 */
+	@Override
+	protected boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
+		return !(_destination == null || !_destination.isEnabled()) &&
+				_isEnabled &&
+				!_received.contains(p);
+	}
+
+	/**
+	 * Determine if the region can handle a player leaving.
+	 */
+	@Override
+	protected boolean canDoPlayerLeave(Player p, LeaveRegionReason reason) {
+		return _destination != null;
+	}
+
+	/**
+	 * Called when a player enters the region and {@code canDoPlayerEnter}
+	 * returns true.
+	 */
+	@Override
+	protected void onPlayerEnter (Player p, EnterRegionReason reason) {
+		_destination.teleport(this, p, _yaw);
+	}
+
+	/**
+	 * Called when a player leaves the region and {@code canDoPlayerLeave}
+	 * returns true.
+	 */
+	@Override
+	protected void onPlayerLeave (Player p, LeaveRegionReason reason) {
+		// remove from received so if player re-enters the region they
+		// can be teleported.
+		_received.remove(p);
+	}
+
+	@Override
+	protected void onDispose() {
+		closePortal();
 	}
 	
 	private void openPortal() {
@@ -212,7 +287,7 @@ public class TPRegion extends Region implements ITPDestination {
 		
 		World world = getWorld();
 
-		if (world == null || ! canBePortal())
+		if (world == null || !(isFlatHorizontal() || isFlatVertical()))
 			return;
 		
 		_portalBlocks.clear();
@@ -244,7 +319,7 @@ public class TPRegion extends Region implements ITPDestination {
 		}
 	}
 	
-	
+	// Remove the portal blocks
 	private void closePortal() {
 		
 		if (getType() != RegionType.PORTAL)
@@ -269,16 +344,15 @@ public class TPRegion extends Region implements ITPDestination {
 						BlockState state = block.getState();
 						state.setType(Material.AIR);
 						state.update(true);
-					 
 					}
 				}
 			}	
 		}
 		
 		refreshChunks();	
-		
 	}
-	
+
+	// update the player watcher state and open or close the portal
 	private void updatePlayerWatcher() {
 		boolean isPlayerWatcher = _destination != null && _destination.isEnabled() && _isEnabled;
 		
@@ -292,6 +366,7 @@ public class TPRegion extends Region implements ITPDestination {
 		}
 	}
 
+	// calculate a destination location
 	@Nullable
 	private Location getDestination(@Nullable ITPDestination sender, Player p, float yaw) {
 		PreCon.notNull(sender);
@@ -308,7 +383,7 @@ public class TPRegion extends Region implements ITPDestination {
 
 			Location pLoc = Float.compare(yaw, 0F) == 0
 					? p.getLocation()
-					: LocationUtils.rotate(senderCenter, p.getLocation(), yaw);
+					: LocationUtils.rotate(senderCenter, p.getLocation(), 0.0D, yaw, 0.0D);
 
 			double x = pLoc.getX() - senderCenter.getX();
 			double y = pLoc.getY() - senderCenter.getY();
@@ -330,10 +405,4 @@ public class TPRegion extends Region implements ITPDestination {
 					p.getLocation().getYaw() + yaw, p.getLocation().getPitch());
 		}
 	}
-	
-	@Override
-	protected void onDispose() {
-		closePortal();
-	}
-	
 }

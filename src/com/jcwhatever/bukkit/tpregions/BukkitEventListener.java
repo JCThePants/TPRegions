@@ -24,6 +24,9 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
+import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,72 +39,78 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+import javax.annotation.Nullable;
 
-public class EventListener implements Listener {
+public class BukkitEventListener implements Listener {
 	
-    
-    @EventHandler(priority=EventPriority.NORMAL)
+    // prevent mob spawning inside teleport regions.
+    @EventHandler
     private void onCreatureSpawn(CreatureSpawnEvent event) {
         
         if (event.getSpawnReason() != SpawnReason.NETHER_PORTAL)
             return;
         
-        TPRegionManager regionManager = TPRegionManager.get();
-        TPRegion region = regionManager.getRegionAt(event.getLocation());
+        TPRegion region = getRegion(event.getLocation());
         if (region == null)
             return;
         
         event.setCancelled(true);
     }
-    
+
+	// prevent block physics inside teleport regions.
 	@EventHandler(priority=EventPriority.HIGH)
-    public void onBlockPhysics(BlockPhysicsEvent event) {
-        
-		TPRegionManager regionManager = TPRegionManager.get();
-		TPRegion region = regionManager.getRegionAt(event.getBlock().getLocation());
+    private void onBlockPhysics(BlockPhysicsEvent event) {
+
+		TPRegion region = getRegion(event.getBlock().getLocation());
 		if (region == null)
 			return;
 		
 		event.setCancelled(true);
     }
-	
+
+	// prevent normal nether portal events in teleport regions.
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerPortal(PlayerPortalEvent event) {
-		TPRegion region = TPRegionManager.get().getRegionAt(event.getFrom());
-		
+	private void onPlayerPortal(PlayerPortalEvent event) {
+
+		TPRegion region = getRegion(event.getFrom());
 		if (region != null && region.isEnabled())
 			event.setCancelled(true);
 	}
-	
+
+	// prevent damaging teleport region blocks.
 	@EventHandler
-	public void onBlockDamage(BlockDamageEvent event) {
-		TPRegion region = TPRegionManager.get().getRegionAt(event.getBlock().getLocation());
-		
+	private void onBlockDamage(BlockDamageEvent event) {
+
+		TPRegion region = getRegion(event.getBlock().getLocation());
 		if (region != null && region.isEnabled())
 			event.setCancelled(true);
 	}
-	
+
+	// prevent breaking teleport region blocks.
 	@EventHandler
-	public void onBlockBreakEvent(BlockBreakEvent event) {
-		TPRegion region = TPRegionManager.get().getRegionAt(event.getBlock().getLocation());
-		
+	private void onBlockBreakEvent(BlockBreakEvent event) {
+
+		TPRegion region = getRegion(event.getBlock().getLocation());
 		if (region != null && region.isEnabled())
 			event.setCancelled(true);
 	}
-	
+
+	// prevent explosion damage to and near teleport region blocks.
 	@EventHandler
-	public void onEntityExplode(EntityExplodeEvent event) {
+	private void onEntityExplode(EntityExplodeEvent event) {
 		
 		for (Block block : event.blockList()) {
-			TPRegion region = TPRegionManager.get().getRegionAt(block.getLocation());
+			TPRegion region = getRegion(block.getLocation());
 			
 			if (region != null && region.isEnabled()) {
 				event.setCancelled(true);
 				return;
 			}
 		}
-		
+	}
+
+	@Nullable
+	private TPRegion getRegion(Location location) {
+		return TPRegions.getRegionManager().getRegionAt(location);
 	}
 }

@@ -22,15 +22,28 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions.regions;
+package com.jcwhatever.bukkit.tpregions;
 
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
+/**
+ * Represents a destination that a player can be teleported to.
+ */
 public interface ITPDestination {
-	
+
+	/**
+	 * Determine if the destination is enabled.
+	 */
 	public boolean isEnabled();
-	
-	public void send(@Nullable ITPDestination sender, Player p, float yaw);
+
+	/**
+	 * Teleport a player to the destination.
+	 *
+	 * @param sender  Optional destination that is forwarding the player.
+	 * @param p       The player to teleport.
+	 * @param yaw     The yaw adjustment. Adjust the players yaw when they are teleported.
+	 */
+	public void teleport(@Nullable ITPDestination sender, Player p, float yaw);
 }

@@ -28,36 +28,39 @@ import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
 		command="setyaw", 
 		staticParams={"regionName", "yaw"},
 		usage="/tpr setyaw <regionName> <yaw>",
-		description="Make adjustments to the players yaw angle when teleported.")
+		description="Make adjustments to the players yaw angle when teleported from the specified region.")
 
 public class SetYawCommand extends AbstractCommand {
+
+	@Localizable static final String _NOT_FOUND = "A teleport region with the name '{0: region name}' was not found.";
+	@Localizable static final String _SUCCESS = "Teleport region '{0: region name}' yaw adjustment set to {1: yaw} degrees.";
 
 	@Override
 	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 		
 		String regionName = args.getName("regionName", 32);
 		float yaw = args.getFloat("yaw");
-		
-		TPRegionManager regionManager = TPRegions.getInstance().getRegionManager(); 
-		
-		TPRegion region = regionManager.getRegion(regionName);
+
+		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
 		if (region == null) {
-			tellError(sender, "A teleport region with the name '" + regionName + "' was not found.");
+			tellError(sender, Lang.get(_NOT_FOUND, regionName));
 			return; // finish
 		}
 		
 		region.setYaw(yaw);
 		
-		tellSuccess(sender, "Teleport region '" + regionName + "' yaw adjustment set to " + yaw + " degrees.");
+		tellSuccess(sender, Lang.get(_SUCCESS, regionName, yaw));
 	}
 	
 }

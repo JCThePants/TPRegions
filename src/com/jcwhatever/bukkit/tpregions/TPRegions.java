@@ -25,11 +25,10 @@
 package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.PluginManager;
-
 import com.jcwhatever.bukkit.tpregions.commands.CommandHandler;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+
+import org.bukkit.ChatColor;
 
 public class TPRegions  extends GenericsPlugin {
 
@@ -37,32 +36,21 @@ public class TPRegions  extends GenericsPlugin {
 	
 	private TPRegionManager _regionManager;
 	
-	public static TPRegions getInstance() {
+	public static TPRegions getPlugin() {
 		return _instance;
+	}
+
+	public static TPRegionManager getRegionManager() {
+		return _instance._regionManager;
 	}
 	
 	public TPRegions() {
 		super();
-	}
-	
-	@Override
-	protected void init() {
+
 		_instance = this;
 	}
 
-    @Override
-    protected void onEnablePlugin() {
-        registerListeners();
-
-        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
-    }
-
-    @Override
-    protected void onDisablePlugin() {
-
-    }
-
-    @Override
+	@Override
 	public String getChatPrefix() {
 		return ChatColor.GRAY + "[TPR] " + ChatColor.RESET;
 	}
@@ -72,18 +60,18 @@ public class TPRegions  extends GenericsPlugin {
 		return "[TPR] ";
 	}
 
-	
-	public TPRegionManager getRegionManager() {
-		return _regionManager;
-	}
-	
-	private void registerListeners() {
-        CommandHandler handler = new CommandHandler();
-        getCommand("tpr").setExecutor(handler);
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new EventListener(), this);
-    }
-	
+    @Override
+    protected void onEnablePlugin() {
 
+		registerCommands(new CommandHandler());
+		registerEventListeners(new BukkitEventListener());
+
+        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
+    }
+
+    @Override
+    protected void onDisablePlugin() {
+		_regionManager.dispose();
+    }
 }
 

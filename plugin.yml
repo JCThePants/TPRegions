@@ -5,10 +5,7 @@ version: 0.0-beta
 depend: [GenericsLib]
 commands:
     tpr:
-        description: Base command for TPRegions
-        usage: |
-            ERROR!
-    tpregions:
+        aliases: [tpregions]
         description: Base command for TPRegions
         usage: |
             ERROR!

@@ -25,7 +25,6 @@
 package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
-import com.jcwhatever.bukkit.tpregions.regions.ITPDestination;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -33,27 +32,66 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
+/**
+ * An {@code ITPDestination} implementation of a {@code Location}.
+ */
 public class DestinationLocation extends Location implements ITPDestination {
-	
+
+	/**
+	 * Convert a {@code Location} object to a new {@code DestinationLocation}.
+	 *
+	 * @param location  The location to convert.
+	 */
 	public static DestinationLocation from(Location location) {
-		return new DestinationLocation(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		return new DestinationLocation(location.getWorld(),
+				location.getX(), location.getY(), location.getZ(),
+				location.getYaw(), location.getPitch());
 	}
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param world  The location world.
+	 * @param x      The location X coordinates.
+	 * @param y      The location Y coordinates.
+	 * @param z      The location Z coordinates.
+	 */
 	public DestinationLocation(World world, double x, double y, double z) {
 		super(world, x, y, z);
 	}
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param world  The location world.
+	 * @param x      The location X coordinates.
+	 * @param y      The location Y coordinates.
+	 * @param z      The location Z coordinates.
+	 * @param yaw    The yaw angle.
+	 * @param pitch  The pitch angle.
+	 */
 	public DestinationLocation(World world, double x, double y, double z, float yaw, float pitch) {
 		super(world, x, y, z, yaw, pitch);
 	}
-	
+
+	/**
+	 * Determine if the location is enabled as
+	 * a teleport destination.
+	 */
 	@Override
 	public boolean isEnabled() {
 		return true;
 	}
 
+	/**
+	 * Teleport a player to the {@code DestinationLocation}.
+	 *
+	 * @param sender  Optional destination that is forwarding the player.
+	 * @param p       The player to teleport.
+	 * @param yaw     The yaw adjustment. Adjust the players yaw when they are teleported.
+	 */
 	@Override
-	public void send(@Nullable ITPDestination sender, Player p, float yaw) {
+	public void teleport(@Nullable ITPDestination sender, Player p, float yaw) {
 		Location destination = new Location(getWorld(),
 				getX(), getY(), getZ(),
 				getYaw(), getPitch());
@@ -65,5 +103,4 @@ public class DestinationLocation extends Location implements ITPDestination {
 	public String toString() {
 		return TextUtils.formatLocation(this, true);
 	}
-
 }

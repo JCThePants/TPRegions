@@ -24,29 +24,36 @@
 
 package com.jcwhatever.bukkit.tpregions.commands;
 
-import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
+import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.language.Localizable;
+import com.jcwhatever.bukkit.generic.regions.data.RegionSelection;
+import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 @CommandInfo(
 		command="create", 
 		staticParams = {"regionName"},
 		usage = "/tpr create <regionName>",
-		description="Create a teleport region or portal. Note that portals must be flat vertically or horizontally.")
+		description="Create a teleport region or portal from the current World Edit selection. " +
+				"Note that portals must be flat vertically or horizontally.")
 
 public class CreateCommand extends AbstractCommand {
-	
-	
+
+	@Localizable static final String _ALREADY_EXISTS = "There is already a teleport region or portal with the " +
+			"name '{0 : region name}'.";
+	@Localizable static final String _FAILED = "Failed to create a new region.";
+	@Localizable static final String _SUCCESS = "New teleport region named '{0: region name}' created. " +
+			"Set the destination using '/tpr set ?'";
+
 	@Override
 	public void execute(CommandSender sender, CommandArguments args)
 	        throws InvalidValueException, InvalidCommandSenderException {
@@ -58,28 +65,24 @@ public class CreateCommand extends AbstractCommand {
 			return; // finish
 		
 		String regionName = args.getName("regionName", 32);
-				
-		TPRegionManager regionManager = TPRegions.getInstance().getRegionManager(); 
-		
-		TPRegion region = regionManager.getRegion(regionName);
+
+		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
 		if (region != null) {
-			tellError(sender, "There is already a teleport region or portal with the name '{0}'.", regionName);
+			tellError(sender, Lang.get(_ALREADY_EXISTS, regionName));
 			return; // finish
 		}
 		
 		RegionSelection sel = getWorldEditSelection((Player)sender);
 		if (sel == null)
 			return; // finish
-		
-		
-		region = regionManager.createRegion(regionName, sel.getP1(), sel.getP2());
+
+		region = TPRegions.getRegionManager().add(regionName, sel.getP1(), sel.getP2());
 			
 		if (region == null) {
-			tellError(sender, "Failed to create a new region.");
+			tellError(sender, Lang.get(_FAILED));
 			return; // finish
 		}
 		
-		tellSuccess(sender, "New teleport region named '{0}' created. Set the destination using '/tpr set ?'", regionName);
+		tellSuccess(sender, Lang.get(_SUCCESS, regionName));
 	}
-	
 }

@@ -24,8 +24,20 @@
 
 package com.jcwhatever.bukkit.tpregions.regions;
 
+/**
+ * Specifies the region type.
+ */
 public enum RegionType {
+	/**
+	 * A region type is not available yet.
+	 */
 	NONE,
+	/**
+	 * An invisible teleport region.
+	 */
 	REGION,
+	/**
+	 * A visible portal region.
+	 */
 	PORTAL
 }

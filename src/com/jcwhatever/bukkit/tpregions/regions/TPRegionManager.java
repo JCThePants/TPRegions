@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.tpregions.regions;
 
 import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.performance.SingleCache;
+import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.regions.IRegion;
 import com.jcwhatever.bukkit.generic.storage.BatchOperation;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -40,48 +40,75 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-public class TPRegionManager {
-	
-	private static TPRegionManager _instance;
-	
-	public static TPRegionManager get() {
-		return _instance;
-	}
+/**
+ * Manages teleport regions.
+ */
+public class TPRegionManager implements IDisposable {
 
-	private Map<String, TPRegion> _regionMap = new HashMap<>(50);
-	private IDataNode _settings;
-	private SingleCache<RegionType, List<TPRegion>> _regionsByTypeCache = new SingleCache<RegionType, List<TPRegion>>();
+	private final IDataNode _dataNode;
+	private final Map<String, TPRegion> _regionMap = new HashMap<>(50);
 
-	public TPRegionManager(IDataNode settings) {
-		_instance = this;
-		_settings = settings;
+	private boolean _isDisposed;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param dataNode  The managers data node.
+	 */
+	public TPRegionManager(IDataNode dataNode) {
+		PreCon.notNull(dataNode);
+
+		_dataNode = dataNode;
 		loadRegions();		
 	}
 
+	/**
+	 * Get a {@code TPRegion} by name.
+	 *
+	 * @param name  The name of the region.
+	 *
+	 * @return  Null if not found.
+	 */
+	@Nullable
 	public TPRegion getRegion(String name) {
+		PreCon.notNullOrEmpty(name);
+
 		return _regionMap.get(name.toLowerCase());
 	}
 
+	/**
+	 * Get all {@code TPRegion}'s.
+	 */
 	public List<TPRegion> getRegions() {
 		return new ArrayList<TPRegion>(_regionMap.values());
 	}
-	
+
+	/**
+	 * Get {@code TPRegions} by type.
+	 *
+	 * @param type  The type to search for.
+	 */
 	public List<TPRegion> getRegions(RegionType type) {
-		if (_regionsByTypeCache.keyEquals(type))
-			return new ArrayList<TPRegion>(_regionsByTypeCache.getValue());
-		
+		PreCon.notNull(type);
+		PreCon.isValid(type != RegionType.NONE, "RegionType cannot be NONE.");
+
 		List<TPRegion> regions = new ArrayList<>(20);
 		
 		for (TPRegion region : getRegions()) {
 			if (region.getType() == type)
 				regions.add(region);
 		}
-		
-		_regionsByTypeCache.set(type, new ArrayList<TPRegion>(regions));
-		
+
 		return regions;
 	}
 
+	/**
+	 * Get the {@code TPRegion} at the specified location.
+	 *
+	 * @param location  The location to check.
+	 *
+	 * @return  The found {@code TPRegion} or null if not found.
+	 */
 	@Nullable
 	public TPRegion getRegionAt(Location location) {
 		PreCon.notNull(location);
@@ -96,12 +123,26 @@ public class TPRegionManager {
 		
 		return null;
 	}
-	
-	
-	
-	public TPRegion createRegion(String name, final Location p1, final Location p2) {
+
+	/**
+	 * Create a new teleport region.
+	 *
+	 * @param name  The name of the region.
+	 * @param p1    The p1 cuboid coordinates.
+	 * @param p2    The p2 cuboid coordinates.
+	 *
+	 * @return  The created region or Null if a region with the name already exists.
+	 */
+	@Nullable
+	public TPRegion add(String name, final Location p1, final Location p2) {
+		PreCon.notNullOrEmpty(name);
+		PreCon.notNull(p1);
+		PreCon.notNull(p2);
+
+		if (_regionMap.containsKey(name.toLowerCase()))
+			return null;
 		
-		IDataNode settings = _settings.getNode(name);
+		IDataNode settings = _dataNode.getNode(name);
 				
 		final TPRegion region = new TPRegion(name, settings);
 		
@@ -114,22 +155,28 @@ public class TPRegionManager {
 		});
 
 		_regionMap.put(region.getSearchName(), region);
-		_regionsByTypeCache.reset();
-		
+
 		region.init(this);
 
 		return region;
 	}
 
-
-	public boolean delete(String name) {
+	/**
+	 * Remove a region by name.
+	 *
+	 * @param name  The name of the region.
+	 *
+	 * @return  True if the region was found and removed.
+	 */
+	public boolean remove(String name) {
+		PreCon.notNullOrEmpty(name);
 
 		TPRegion region = getRegion(name);
 		if (region == null)
 			return false;
 
-		_settings.set(region.getName(), null);
-        _settings.saveAsync(null);
+		_dataNode.set(region.getName(), null);
+        _dataNode.saveAsync(null);
 
 		region.dispose();
 		_regionMap.remove(region.getSearchName());
@@ -145,15 +192,32 @@ public class TPRegionManager {
 		return true;
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return _isDisposed;
+	}
+
+	@Override
+	public void dispose() {
+		List<TPRegion> regions = getRegions();
+
+		for (TPRegion region : regions) {
+			region.dispose();
+		}
+
+		_isDisposed = true;
+	}
+
+	// load regions from data node
 	private void loadRegions() {
 
-		Set<String> regionNames = _settings.getSubNodeNames();
+		Set<String> regionNames = _dataNode.getSubNodeNames();
 		if (regionNames == null || regionNames.isEmpty())
 			return;
 
 
 		for (String regionName : regionNames) {
-			loadRegion(regionName, _settings.getNode(regionName));
+			loadRegion(regionName, _dataNode.getNode(regionName));
 		}
 
 		for (TPRegion region : _regionMap.values()) {
@@ -161,13 +225,11 @@ public class TPRegionManager {
 		}
 	}
 
-
+	// load a single region
 	private void loadRegion(String name, IDataNode settings) {
 		
 		TPRegion region = new TPRegion(name, settings);
 		
 		_regionMap.put(region.getSearchName(), region);
 	}
-
-	
 }

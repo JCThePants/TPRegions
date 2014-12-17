@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.tpregions.commands.list.ListCommand;
 public class CommandHandler extends AbstractCommandHandler {
 
 	public CommandHandler() {
-		super(TPRegions.getInstance());
+		super(TPRegions.getPlugin());
 	}
 
 	@Override
@@ -44,5 +44,4 @@ public class CommandHandler extends AbstractCommandHandler {
 		this.registerCommand(SetCommand.class);
 		this.registerCommand(SetYawCommand.class);
 	}
-
 }

@@ -28,11 +28,13 @@ import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
+import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils.FormatTemplate;
+import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -45,6 +47,10 @@ import java.util.List;
 
 public class ListCommand extends AbstractCommand {
 
+	@Localizable static final String _PAGINATOR_TITLE = "Teleport Regions/Portals";
+	@Localizable static final String _LIST_ITEM_DESCRIPTION = "Type: {0: type}, destination: {1: destination name}";
+	@Localizable static final String _LABEL_NOT_SET = "not set";
+
 	public ListCommand () {
 		super();
 		
@@ -56,17 +62,17 @@ public class ListCommand extends AbstractCommand {
 	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
 		
 		int page = args.getInteger("page");
+
+		ChatPaginator pagin = new ChatPaginator(TPRegions.getPlugin(), 6, Lang.get(_PAGINATOR_TITLE));
 		
-		TPRegionManager regionManager = TPRegions.getInstance().getRegionManager();
-		
-		ChatPaginator pagin = new ChatPaginator(TPRegions.getInstance(), 6, "Teleport Regions/Portals");
-		
-		List<TPRegion> regions = regionManager.getRegions();
+		List<TPRegion> regions = TPRegions.getRegionManager().getRegions();
 		
 		for (TPRegion region : regions) {
 			if (region == null)
 				continue;
-			pagin.add(region.getName(), "Type: " + region.getType().name() + ", destination: " + (region.getDestination() != null ? region.getDestination() : "none"));
+			pagin.add(region.getName(),
+					Lang.get(_LIST_ITEM_DESCRIPTION, region.getType().name(),
+							(region.getDestination() != null ? region.getDestination() : Lang.get(_LABEL_NOT_SET))));
 		}
 		
 		pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
