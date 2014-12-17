@@ -36,7 +36,7 @@ import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
-		command="setyaw", 
+		command="setyaw",
 		staticParams={"regionName", "yaw"},
 		usage="/tpr setyaw <regionName> <yaw>",
 		description="Make adjustments to the players yaw angle when teleported from the specified region.")
@@ -48,7 +48,7 @@ public class SetYawCommand extends AbstractCommand {
 
 	@Override
 	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
-		
+
 		String regionName = args.getName("regionName", 32);
 		float yaw = args.getFloat("yaw");
 
@@ -57,12 +57,12 @@ public class SetYawCommand extends AbstractCommand {
 			tellError(sender, Lang.get(_NOT_FOUND, regionName));
 			return; // finish
 		}
-		
+
 		region.setYaw(yaw);
-		
+
 		tellSuccess(sender, Lang.get(_SUCCESS, regionName, yaw));
 	}
-	
+
 }
 
 

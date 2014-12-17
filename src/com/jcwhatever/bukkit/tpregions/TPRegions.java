@@ -33,9 +33,9 @@ import org.bukkit.ChatColor;
 public class TPRegions  extends GenericsPlugin {
 
 	private static TPRegions _instance;
-	
+
 	private TPRegionManager _regionManager;
-	
+
 	public static TPRegions getPlugin() {
 		return _instance;
 	}
@@ -43,7 +43,7 @@ public class TPRegions  extends GenericsPlugin {
 	public static TPRegionManager getRegionManager() {
 		return _instance._regionManager;
 	}
-	
+
 	public TPRegions() {
 		super();
 
@@ -60,18 +60,18 @@ public class TPRegions  extends GenericsPlugin {
 		return "[TPR] ";
 	}
 
-    @Override
-    protected void onEnablePlugin() {
+	@Override
+	protected void onEnablePlugin() {
 
 		registerCommands(new CommandHandler());
 		registerEventListeners(new BukkitEventListener());
 
-        _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
-    }
+		_regionManager = new TPRegionManager(getDataNode().getNode("regions"));
+	}
 
-    @Override
-    protected void onDisablePlugin() {
+	@Override
+	protected void onDisablePlugin() {
 		_regionManager.dispose();
-    }
+	}
 }
 

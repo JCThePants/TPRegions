@@ -37,7 +37,7 @@ import org.bukkit.command.CommandSender;
 
 
 @CommandInfo(
-		command="del", 
+		command="del",
 		staticParams={"regionName"},
 		usage="/tpr del <regionName>",
 		description="Remove a teleport region or portal.")
@@ -50,7 +50,7 @@ public class DelCommand extends AbstractCommand {
 
 	@Override
 	public void execute(CommandSender sender, CommandArguments args) throws InvalidValueException {
-		
+
 		String regionName = args.getName("regionName", 32);
 
 		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
@@ -58,13 +58,12 @@ public class DelCommand extends AbstractCommand {
 			tellError(sender, Lang.get(_NOT_FOUND, regionName));
 			return; // finish
 		}
-		
+
 		if (!TPRegions.getRegionManager().remove(regionName)) {
 			tellError(sender, Lang.get(_FAILED, regionName));
 		}
-		
+
 		tellSuccess(sender, Lang.get(_SUCCESS, regionName));
 	}
-	
 }
 

@@ -42,7 +42,7 @@ import java.util.List;
 
 @CommandInfo(
 		parent="list",
-		command="portals", 
+		command="portals",
 		staticParams={"page=1"},
 		usage="/tpr list portals [page]",
 		description="List all portals.")

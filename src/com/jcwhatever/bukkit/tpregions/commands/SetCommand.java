@@ -42,7 +42,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @CommandInfo(
-		command="set", 
+		command="set",
 		staticParams={"regionName", "destination=$location"},
 		usage="/tpr set <regionName> [destination]",
 		description="Sets the destination of a TPRegion to the players current location or the specified region.")
@@ -55,27 +55,27 @@ public class SetCommand extends AbstractCommand {
 
 	@Override
 	public void execute(CommandSender sender, CommandArguments args)
-	        throws InvalidValueException, InvalidCommandSenderException {
+			throws InvalidValueException, InvalidCommandSenderException {
 
 		String regionName = args.getName("regionName", 32);
-		
+
 		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
 		if (region == null) {
 			tellError(sender, Lang.get(_NOT_FOUND, regionName));
 			return; // finish
 		}
-		
+
 		// Portal Location
 		if (args.getString("destination").equals("$location")) {
-			
-		    InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
-		            "Console has no location.");
-			
+
+			InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
+					"Console has no location.");
+
 			Player p = (Player)sender;
 			Location location = p.getLocation();
-			
+
 			region.setDestination(DestinationLocation.from(location));
-			
+
 			tellSuccess(sender, Lang.get(_SET_LOCATION, regionName));
 			tell(sender, TextUtils.formatLocation(location, true));
 		}
@@ -91,7 +91,7 @@ public class SetCommand extends AbstractCommand {
 			}
 
 			region.setDestination(destination);
-			
+
 			tellSuccess(sender, Lang.get(_SET_REGION, region.getName(), destination.getName()));
 		}
 	}

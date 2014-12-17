@@ -42,31 +42,31 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import javax.annotation.Nullable;
 
 public class BukkitEventListener implements Listener {
-	
-    // prevent mob spawning inside teleport regions.
-    @EventHandler
-    private void onCreatureSpawn(CreatureSpawnEvent event) {
-        
-        if (event.getSpawnReason() != SpawnReason.NETHER_PORTAL)
-            return;
-        
-        TPRegion region = getRegion(event.getLocation());
-        if (region == null)
-            return;
-        
-        event.setCancelled(true);
-    }
+
+	// prevent mob spawning inside teleport regions.
+	@EventHandler
+	private void onCreatureSpawn(CreatureSpawnEvent event) {
+
+		if (event.getSpawnReason() != SpawnReason.NETHER_PORTAL)
+			return;
+
+		TPRegion region = getRegion(event.getLocation());
+		if (region == null)
+			return;
+
+		event.setCancelled(true);
+	}
 
 	// prevent block physics inside teleport regions.
 	@EventHandler(priority=EventPriority.HIGH)
-    private void onBlockPhysics(BlockPhysicsEvent event) {
+	private void onBlockPhysics(BlockPhysicsEvent event) {
 
 		TPRegion region = getRegion(event.getBlock().getLocation());
 		if (region == null)
 			return;
-		
+
 		event.setCancelled(true);
-    }
+	}
 
 	// prevent normal nether portal events in teleport regions.
 	@EventHandler(priority=EventPriority.HIGH)
@@ -98,10 +98,10 @@ public class BukkitEventListener implements Listener {
 	// prevent explosion damage to and near teleport region blocks.
 	@EventHandler
 	private void onEntityExplode(EntityExplodeEvent event) {
-		
+
 		for (Block block : event.blockList()) {
 			TPRegion region = getRegion(block.getLocation());
-			
+
 			if (region != null && region.isEnabled()) {
 				event.setCancelled(true);
 				return;

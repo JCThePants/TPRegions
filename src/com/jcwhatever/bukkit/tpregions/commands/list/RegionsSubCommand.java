@@ -42,7 +42,7 @@ import java.util.List;
 
 @CommandInfo(
 		parent="list",
-		command="regions", 
+		command="regions",
 		staticParams={"page=1"},
 		usage="/tpr list regions [page]",
 		description="List all teleport regions.")

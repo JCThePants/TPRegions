@@ -36,7 +36,7 @@ import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
-		command="disable", 
+		command="disable",
 		staticParams={"regionName"},
 		usage="/tpr disable <regionName>",
 		description="Disables a teleport region or portal.")

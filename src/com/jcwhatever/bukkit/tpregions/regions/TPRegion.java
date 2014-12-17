@@ -74,9 +74,9 @@ public class TPRegion extends Region implements ITPDestination {
 	 */
 	public TPRegion(String name, IDataNode dataNode) {
 		super(TPRegions.getPlugin(), name, dataNode);
-        
-        PreCon.notNull(dataNode);
-		
+
+		PreCon.notNull(dataNode);
+
 		_received = new PlayerSet(TPRegions.getPlugin());
 	}
 
@@ -90,22 +90,22 @@ public class TPRegion extends Region implements ITPDestination {
 	 */
 	public void init(TPRegionManager regionManager) {
 
-        //noinspection ConstantConditions
-        _isEnabled = getDataNode().getBoolean("enabled", _isEnabled);
+		//noinspection ConstantConditions
+		_isEnabled = getDataNode().getBoolean("enabled", _isEnabled);
 		_yaw = (float) getDataNode().getDouble("yaw", _yaw);
-		
+
 		String dest = getDataNode().getString("destination");
-		
+
 		if (dest != null) {
-			
+
 			Location destLoc = getDataNode().getLocation("destination", null);
-			
+
 			// Destination is location
-            _destination = destLoc != null 
-                    ? DestinationLocation.from(destLoc) 
-                    : regionManager.getRegion(dest);
+			_destination = destLoc != null
+					? DestinationLocation.from(destLoc)
+					: regionManager.getRegion(dest);
 		}
-		
+
 		updatePlayerWatcher();
 	}
 
@@ -121,7 +121,7 @@ public class TPRegion extends Region implements ITPDestination {
 	 * Determine if the region is enabled.
 	 */
 	@Override
-    public boolean isEnabled() {
+	public boolean isEnabled() {
 		return _isEnabled;
 	}
 
@@ -156,7 +156,7 @@ public class TPRegion extends Region implements ITPDestination {
 		_yaw = yaw % 360;
 
 		//noinspection ConstantConditions
-        getDataNode().set("yaw", _yaw);
+		getDataNode().set("yaw", _yaw);
 		getDataNode().saveAsync(null);
 	}
 
@@ -279,85 +279,85 @@ public class TPRegion extends Region implements ITPDestination {
 	protected void onDispose() {
 		closePortal();
 	}
-	
+
 	private void openPortal() {
-		
-		 if (getType() != RegionType.PORTAL)
-			 return;
-		
+
+		if (getType() != RegionType.PORTAL)
+			return;
+
 		World world = getWorld();
 
 		if (world == null || !(isFlatHorizontal() || isFlatVertical()))
 			return;
-		
+
 		_portalBlocks.clear();
-		
+
 		final Material portalMaterial = isFlatVertical() ? Material.PORTAL : Material.ENDER_PORTAL;
-		
+
 		for (int y = getYEnd(); y >= getYStart(); y--) {
 			for (int x = getXStart(); x <= getXEnd(); x++) {
 				for (int z = getZStart(); z <= getZEnd(); z++) {
 					Block block = world.getBlockAt(x, y, z);
-			
-					if (block.getType() == Material.AIR || 
-						(block.getType() == Material.PORTAL && portalMaterial == Material.ENDER_PORTAL) || 
-						(block.getType() == Material.ENDER_PORTAL && portalMaterial == Material.PORTAL)) {
+
+					if (block.getType() == Material.AIR ||
+							(block.getType() == Material.PORTAL && portalMaterial == Material.ENDER_PORTAL) ||
+							(block.getType() == Material.ENDER_PORTAL && portalMaterial == Material.PORTAL)) {
 						block.setType(Material.GLOWSTONE);
 						_portalBlocks.add(block.getState());
-						
+
 					}
 				}
-			}	
+			}
 		}
-		
+
 		for (BlockState block : _portalBlocks) {
 			block.setType(portalMaterial);
 		}
-		
+
 		for (BlockState block : _portalBlocks) {
 			block.update(true);
 		}
 	}
-	
+
 	// Remove the portal blocks
 	private void closePortal() {
-		
+
 		if (getType() != RegionType.PORTAL)
 			return;
-		
+
 		World world = getWorld();
 
 		if (world == null)
 			return;
-		
+
 		_portalBlocks.clear();
-		
+
 		for (int y = getYEnd(); y >= getYStart(); y--) {
 			for (int x = getXStart(); x <= getXEnd(); x++) {
 				for (int z = getZStart(); z <= getZEnd(); z++) {
 
 					Block block = world.getBlockAt(x, y, z);
-			
+
 					if (block.getType() == Material.PORTAL ||
-						block.getType() == Material.ENDER_PORTAL) {
-						
+							block.getType() == Material.ENDER_PORTAL) {
+
 						BlockState state = block.getState();
 						state.setType(Material.AIR);
 						state.update(true);
 					}
 				}
-			}	
+			}
 		}
-		
-		refreshChunks();	
+
+		refreshChunks();
 	}
 
 	// update the player watcher state and open or close the portal
 	private void updatePlayerWatcher() {
 		boolean isPlayerWatcher = _destination != null && _destination.isEnabled() && _isEnabled;
-		
-		setIsPlayerWatcher(isPlayerWatcher);	
-		
+
+		setIsPlayerWatcher(isPlayerWatcher);
+
 		if (isPlayerWatcher) {
 			openPortal();
 		}

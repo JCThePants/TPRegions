@@ -59,7 +59,7 @@ public class TPRegionManager implements IDisposable {
 		PreCon.notNull(dataNode);
 
 		_dataNode = dataNode;
-		loadRegions();		
+		loadRegions();
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class TPRegionManager implements IDisposable {
 		PreCon.isValid(type != RegionType.NONE, "RegionType cannot be NONE.");
 
 		List<TPRegion> regions = new ArrayList<>(20);
-		
+
 		for (TPRegion region : getRegions()) {
 			if (region.getType() == type)
 				regions.add(region);
@@ -112,15 +112,15 @@ public class TPRegionManager implements IDisposable {
 	@Nullable
 	public TPRegion getRegionAt(Location location) {
 		PreCon.notNull(location);
-		
+
 		List<IRegion> regions = GenericsLib.getRegionManager().getRegions(location);
-		
+
 		for (IRegion region : regions) {
 			if (region.getRegionClass().equals(TPRegion.class)) {
-                return getRegion(region.getName());
+				return getRegion(region.getName());
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -141,11 +141,11 @@ public class TPRegionManager implements IDisposable {
 
 		if (_regionMap.containsKey(name.toLowerCase()))
 			return null;
-		
+
 		IDataNode settings = _dataNode.getNode(name);
-				
+
 		final TPRegion region = new TPRegion(name, settings);
-		
+
 		settings.runBatchOperation(new BatchOperation() {
 
 			@Override
@@ -176,7 +176,7 @@ public class TPRegionManager implements IDisposable {
 			return false;
 
 		_dataNode.set(region.getName(), null);
-        _dataNode.saveAsync(null);
+		_dataNode.saveAsync(null);
 
 		region.dispose();
 		_regionMap.remove(region.getSearchName());
@@ -227,9 +227,9 @@ public class TPRegionManager implements IDisposable {
 
 	// load a single region
 	private void loadRegion(String name, IDataNode settings) {
-		
+
 		TPRegion region = new TPRegion(name, settings);
-		
+
 		_regionMap.put(region.getSearchName(), region);
 	}
 }

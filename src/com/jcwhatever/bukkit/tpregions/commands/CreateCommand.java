@@ -40,7 +40,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @CommandInfo(
-		command="create", 
+		command="create",
 		staticParams = {"regionName"},
 		usage = "/tpr create <regionName>",
 		description="Create a teleport region or portal from the current World Edit selection. " +
@@ -56,14 +56,14 @@ public class CreateCommand extends AbstractCommand {
 
 	@Override
 	public void execute(CommandSender sender, CommandArguments args)
-	        throws InvalidValueException, InvalidCommandSenderException {
-		
-	    InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
-	            "Console cannot select region.");
-		
+			throws InvalidValueException, InvalidCommandSenderException {
+
+		InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
+				"Console cannot select region.");
+
 		if (!isWorldEditInstalled(sender))
 			return; // finish
-		
+
 		String regionName = args.getName("regionName", 32);
 
 		TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
@@ -71,18 +71,18 @@ public class CreateCommand extends AbstractCommand {
 			tellError(sender, Lang.get(_ALREADY_EXISTS, regionName));
 			return; // finish
 		}
-		
+
 		RegionSelection sel = getWorldEditSelection((Player)sender);
 		if (sel == null)
 			return; // finish
 
 		region = TPRegions.getRegionManager().add(regionName, sel.getP1(), sel.getP2());
-			
+
 		if (region == null) {
 			tellError(sender, Lang.get(_FAILED));
 			return; // finish
 		}
-		
+
 		tellSuccess(sender, Lang.get(_SUCCESS, regionName));
 	}
 }
