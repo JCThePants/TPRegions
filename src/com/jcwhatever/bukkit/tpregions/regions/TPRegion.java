@@ -24,7 +24,6 @@
 
 package com.jcwhatever.bukkit.tpregions.regions;
 
-import com.jcwhatever.bukkit.generic.player.collections.PlayerSet;
 import com.jcwhatever.bukkit.generic.regions.Region;
 import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
@@ -46,6 +45,7 @@ import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
@@ -61,7 +61,7 @@ import javax.annotation.Nullable;
 public class TPRegion extends Region implements ITPDestination {
 
     private ITPDestination _destination;
-    private Set<Player> _received;
+    private Set<UUID> _received;
     private boolean _isEnabled = true;
     private float _yaw = 0.0F;
     Set<BlockState> _portalBlocks = new HashSet<BlockState>(100);
@@ -77,7 +77,7 @@ public class TPRegion extends Region implements ITPDestination {
 
         PreCon.notNull(dataNode);
 
-        _received = new PlayerSet(TPRegions.getPlugin());
+        _received = new HashSet<>(5);
     }
 
     /**
@@ -206,15 +206,16 @@ public class TPRegion extends Region implements ITPDestination {
      */
     @Override
     public void teleport(@Nullable ITPDestination sender, final Player p, float yaw) {
+        PreCon.notNull(p);
 
-        if (_received.contains(p))
+        if (_received.contains(p.getUniqueId()) && sender == this)
             return;
 
         final Location destination = getDestination(sender, p, yaw);
         if (destination == null)
             return;
 
-        _received.add(p);
+        _received.add(p.getUniqueId());
 
         final GameMode gm = p.getGameMode();
         final Vector v = p.getVelocity();
@@ -242,17 +243,7 @@ public class TPRegion extends Region implements ITPDestination {
      */
     @Override
     protected boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
-        return !(_destination == null || !_destination.isEnabled()) &&
-                _isEnabled &&
-                !_received.contains(p);
-    }
-
-    /**
-     * Determine if the region can handle a player leaving.
-     */
-    @Override
-    protected boolean canDoPlayerLeave(Player p, LeaveRegionReason reason) {
-        return _destination != null;
+        return _isEnabled;
     }
 
     /**
@@ -261,7 +252,12 @@ public class TPRegion extends Region implements ITPDestination {
      */
     @Override
     protected void onPlayerEnter (Player p, EnterRegionReason reason) {
-        _destination.teleport(this, p, _yaw);
+
+        if (!(_destination == null || !_destination.isEnabled()) &&
+                !_received.contains(p.getUniqueId())) {
+            _destination.teleport(this, p, _yaw);
+        }
+        _received.remove(p.getUniqueId());
     }
 
     /**
@@ -272,7 +268,7 @@ public class TPRegion extends Region implements ITPDestination {
     protected void onPlayerLeave (Player p, LeaveRegionReason reason) {
         // remove from received so if player re-enters the region they
         // can be teleported.
-        _received.remove(p);
+        _received.remove(p.getUniqueId());
     }
 
     @Override
