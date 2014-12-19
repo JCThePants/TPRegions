@@ -352,7 +352,7 @@ public class TPRegion extends Region implements ITPDestination {
     private void updatePlayerWatcher() {
         boolean isPlayerWatcher = _destination != null && _destination.isEnabled() && _isEnabled;
 
-        setIsPlayerWatcher(isPlayerWatcher);
+        setEventListener(isPlayerWatcher);
 
         if (isPlayerWatcher) {
             openPortal();
