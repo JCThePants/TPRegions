@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.tpregions.regions;
 import com.jcwhatever.bukkit.generic.GenericsLib;
 import com.jcwhatever.bukkit.generic.mixins.IDisposable;
 import com.jcwhatever.bukkit.generic.regions.IRegion;
-import com.jcwhatever.bukkit.generic.storage.BatchOperation;
+import com.jcwhatever.bukkit.generic.storage.DataBatchOperation;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
 
@@ -146,7 +146,7 @@ public class TPRegionManager implements IDisposable {
 
         final TPRegion region = new TPRegion(name, settings);
 
-        settings.runBatchOperation(new BatchOperation() {
+        settings.runBatchOperation(new DataBatchOperation() {
 
             @Override
             public void run(IDataNode dataNode) {
