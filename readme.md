@@ -13,7 +13,7 @@ Any teleport region created that is only one block thick becomes a portal. If th
 
 Currently does not support BungeeCord.
 
-Requires GenericsLib and WorldEdit plugins.
+Requires GenericsLib.
 
 Note: Because GenericsLib is still in development, this plugin is subject to breaking changes.
 

@@ -31,7 +31,7 @@ import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderExc
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
 import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidValueException;
 import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.regions.selection.RegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
@@ -43,7 +43,7 @@ import org.bukkit.entity.Player;
         command="create",
         staticParams = {"regionName"},
         usage = "/tpr create <regionName>",
-        description="Create a teleport region or portal from the current World Edit selection. " +
+        description="Create a teleport region or portal from your current region selection. " +
                 "Note that portals must be flat vertically or horizontally.")
 
 public class CreateCommand extends AbstractCommand {
@@ -61,9 +61,6 @@ public class CreateCommand extends AbstractCommand {
         InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
                 "Console cannot select region.");
 
-        if (!isWorldEditInstalled(sender))
-            return; // finish
-
         String regionName = args.getName("regionName", 32);
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
@@ -72,7 +69,7 @@ public class CreateCommand extends AbstractCommand {
             return; // finish
         }
 
-        RegionSelection sel = getWorldEditSelection((Player)sender);
+        IRegionSelection sel = getRegionSelection((Player) sender);
         if (sel == null)
             return; // finish
 
