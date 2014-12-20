@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.tpregions.regions;
 
 import com.jcwhatever.bukkit.generic.regions.Region;
-import com.jcwhatever.bukkit.generic.regions.data.IRegionSelection;
+import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.generic.storage.IDataNode;
 import com.jcwhatever.bukkit.generic.utils.LocationUtils;
 import com.jcwhatever.bukkit.generic.utils.PreCon;
