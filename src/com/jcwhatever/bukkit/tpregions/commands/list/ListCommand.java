@@ -54,8 +54,8 @@ public class ListCommand extends AbstractCommand {
     public ListCommand () {
         super();
 
-        registerSubCommand(PortalsSubCommand.class);
-        registerSubCommand(RegionsSubCommand.class);
+        registerCommand(PortalsSubCommand.class);
+        registerCommand(RegionsSubCommand.class);
     }
 
     @Override
