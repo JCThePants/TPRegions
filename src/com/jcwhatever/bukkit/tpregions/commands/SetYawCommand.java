@@ -41,7 +41,7 @@ import org.bukkit.command.CommandSender;
         description="Make adjustments to the players yaw angle when teleported from the specified region.",
 
         paramDescriptions = {
-                "regionName= The name of the region to set yaw adjusment on.",
+                "regionName= The name of the region to set yaw adjustment on.",
                 "yaw= The yaw adjustment in degrees. Should be a multiple of 90. Range is 0-270."})
 
 public class SetYawCommand extends AbstractCommand {
