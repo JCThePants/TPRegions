@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.tpregions.commands;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
@@ -39,7 +39,10 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         command="del",
         staticParams={"regionName"},
-        description="Remove a teleport region or portal.")
+        description="Remove a teleport region or portal.",
+
+        paramDescriptions = {
+                "regionName= The name of the region to remove."})
 
 public class DelCommand extends AbstractCommand {
 
@@ -48,7 +51,7 @@ public class DelCommand extends AbstractCommand {
     @Localizable static final String _SUCCESS = "Teleport region/portal '{0: region name}' deleted.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
         String regionName = args.getName("regionName", 32);
 

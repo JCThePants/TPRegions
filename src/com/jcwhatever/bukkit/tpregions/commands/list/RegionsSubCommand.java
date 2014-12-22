@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.tpregions.commands.list;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.messaging.ChatPaginator;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils.FormatTemplate;
@@ -44,7 +44,10 @@ import java.util.List;
         parent="list",
         command="regions",
         staticParams={"page=1"},
-        description="List all teleport regions.")
+        description="List all teleport regions.",
+
+        paramDescriptions = {
+                "page= {PAGE}"})
 
 public class RegionsSubCommand extends AbstractCommand {
 
@@ -53,7 +56,7 @@ public class RegionsSubCommand extends AbstractCommand {
     @Localizable static final String _LABEL_NOT_SET = "not set";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
         int page = args.getInteger("page");
 

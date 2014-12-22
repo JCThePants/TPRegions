@@ -27,7 +27,7 @@ package com.jcwhatever.bukkit.tpregions.commands;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
@@ -38,7 +38,10 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         command="disable",
         staticParams={"regionName"},
-        description="Disables a teleport region or portal.")
+        description="Disables a teleport region or portal.",
+
+        paramDescriptions = {
+                "regionName= The name of the region to disable."})
 
 public class DisableCommand extends AbstractCommand {
 
@@ -46,7 +49,7 @@ public class DisableCommand extends AbstractCommand {
     @Localizable static final String _DISABLED = "Teleport region '{0: region name}' {RED}Disabled.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws InvalidArgumentException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
         String regionName = args.getName("regionName", 32);
 

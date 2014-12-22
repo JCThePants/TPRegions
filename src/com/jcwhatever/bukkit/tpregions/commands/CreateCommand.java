@@ -27,9 +27,7 @@ package com.jcwhatever.bukkit.tpregions.commands;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.regions.selection.IRegionSelection;
 import com.jcwhatever.bukkit.tpregions.Lang;
@@ -43,7 +41,10 @@ import org.bukkit.entity.Player;
         command="create",
         staticParams = {"regionName"},
         description="Create a teleport region or portal from your current region selection. " +
-                "Note that portals must be flat vertically or horizontally.")
+                "Note that portals must be flat vertically or horizontally.",
+
+        paramDescriptions = {
+                "regionName= The name of the region. {NAME}"})
 
 public class CreateCommand extends AbstractCommand {
 
@@ -54,11 +55,9 @@ public class CreateCommand extends AbstractCommand {
             "Set the destination using '/tpr set ?'";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidArgumentException, InvalidCommandSenderException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
-        InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
-                "Console cannot select region.");
+        CommandException.assertNotConsole(this, sender);
 
         String regionName = args.getName("regionName", 32);
 

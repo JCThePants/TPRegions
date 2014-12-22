@@ -27,9 +27,7 @@ package com.jcwhatever.bukkit.tpregions.commands;
 import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
 import com.jcwhatever.bukkit.generic.commands.CommandInfo;
 import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidCommandSenderException.CommandSenderType;
-import com.jcwhatever.bukkit.generic.commands.exceptions.InvalidArgumentException;
+import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
 import com.jcwhatever.bukkit.generic.language.Localizable;
 import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
@@ -44,7 +42,12 @@ import org.bukkit.entity.Player;
 @CommandInfo(
         command="set",
         staticParams={"regionName", "destination=$location"},
-        description="Sets the destination of a TPRegion to the players current location or the specified region.")
+        description="Sets the destination of a TPRegion to the players current location or the specified region.",
+
+        paramDescriptions = {
+                "regionName= The name of the region to set a destination.",
+                "destination= The name of the destination region to teleport player to or leave blank to use" +
+                        "your current location as the teleport location."})
 
 public class SetCommand extends AbstractCommand {
 
@@ -53,8 +56,7 @@ public class SetCommand extends AbstractCommand {
     @Localizable static final String _SET_REGION = "Teleport region '{0: region name}' destination set to region '{1: destination name}'.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args)
-            throws InvalidArgumentException, InvalidCommandSenderException {
+    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
         String regionName = args.getName("regionName", 32);
 
@@ -67,8 +69,7 @@ public class SetCommand extends AbstractCommand {
         // Portal Location
         if (args.getString("destination").equals("$location")) {
 
-            InvalidCommandSenderException.check(sender, CommandSenderType.PLAYER,
-                    "Console has no location.");
+            CommandException.assertNotConsole(this, sender);
 
             Player p = (Player)sender;
             Location location = p.getLocation();
