@@ -38,7 +38,6 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         command="enable",
         staticParams={"regionName"},
-        usage="/tpr enable <regionName>",
         description="Enables a teleport region or portal.")
 
 public class EnableCommand extends AbstractCommand {

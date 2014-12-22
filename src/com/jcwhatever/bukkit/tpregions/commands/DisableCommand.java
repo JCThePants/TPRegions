@@ -38,7 +38,6 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         command="disable",
         staticParams={"regionName"},
-        usage="/tpr disable <regionName>",
         description="Disables a teleport region or portal.")
 
 public class DisableCommand extends AbstractCommand {

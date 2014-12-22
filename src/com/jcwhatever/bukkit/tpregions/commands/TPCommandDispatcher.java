@@ -24,13 +24,13 @@
 
 package com.jcwhatever.bukkit.tpregions.commands;
 
-import com.jcwhatever.bukkit.generic.commands.AbstractCommandHandler;
+import com.jcwhatever.bukkit.generic.commands.CommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.commands.list.ListCommand;
 
-public class CommandHandler extends AbstractCommandHandler {
+public class TPCommandDispatcher extends CommandDispatcher {
 
-    public CommandHandler() {
+    public TPCommandDispatcher() {
         super(TPRegions.getPlugin());
     }
 

@@ -38,7 +38,6 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         command="setyaw",
         staticParams={"regionName", "yaw"},
-        usage="/tpr setyaw <regionName> <yaw>",
         description="Make adjustments to the players yaw angle when teleported from the specified region.")
 
 public class SetYawCommand extends AbstractCommand {

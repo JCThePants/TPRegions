@@ -42,7 +42,6 @@ import java.util.List;
 @CommandInfo(
         command="list",
         staticParams={"page=1"},
-        usage="/tpr list [page]",
         description="List all regions and portals.")
 
 public class ListCommand extends AbstractCommand {

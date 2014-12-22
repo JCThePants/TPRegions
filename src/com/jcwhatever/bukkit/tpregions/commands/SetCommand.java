@@ -44,7 +44,6 @@ import org.bukkit.entity.Player;
 @CommandInfo(
         command="set",
         staticParams={"regionName", "destination=$location"},
-        usage="/tpr set <regionName> [destination]",
         description="Sets the destination of a TPRegion to the players current location or the specified region.")
 
 public class SetCommand extends AbstractCommand {

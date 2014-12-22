@@ -25,7 +25,7 @@
 package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.bukkit.generic.GenericsPlugin;
-import com.jcwhatever.bukkit.tpregions.commands.CommandHandler;
+import com.jcwhatever.bukkit.tpregions.commands.TPCommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
 
 import org.bukkit.ChatColor;
@@ -65,7 +65,7 @@ public class TPRegions  extends GenericsPlugin {
 
         _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
 
-        registerCommands(new CommandHandler());
+        registerCommands(new TPCommandDispatcher());
         registerEventListeners(new BukkitEventListener());
     }
 

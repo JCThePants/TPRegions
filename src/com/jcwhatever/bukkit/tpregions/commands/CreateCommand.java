@@ -42,7 +42,6 @@ import org.bukkit.entity.Player;
 @CommandInfo(
         command="create",
         staticParams = {"regionName"},
-        usage = "/tpr create <regionName>",
         description="Create a teleport region or portal from your current region selection. " +
                 "Note that portals must be flat vertically or horizontally.")
 

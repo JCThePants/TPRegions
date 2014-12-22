@@ -44,7 +44,6 @@ import java.util.List;
         parent="list",
         command="regions",
         staticParams={"page=1"},
-        usage="/tpr list regions [page]",
         description="List all teleport regions.")
 
 public class RegionsSubCommand extends AbstractCommand {

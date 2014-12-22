@@ -39,7 +39,6 @@ import org.bukkit.command.CommandSender;
 @CommandInfo(
         command="del",
         staticParams={"regionName"},
-        usage="/tpr del <regionName>",
         description="Remove a teleport region or portal.")
 
 public class DelCommand extends AbstractCommand {
