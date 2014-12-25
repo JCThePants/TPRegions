@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.bukkit.generic.GenericsPlugin;
+import com.jcwhatever.generic.GenericsPlugin;
 import com.jcwhatever.bukkit.tpregions.commands.TPCommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
 

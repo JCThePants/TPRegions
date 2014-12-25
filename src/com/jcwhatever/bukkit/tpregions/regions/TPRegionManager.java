@@ -24,12 +24,12 @@
 
 package com.jcwhatever.bukkit.tpregions.regions;
 
-import com.jcwhatever.bukkit.generic.GenericsLib;
-import com.jcwhatever.bukkit.generic.mixins.IDisposable;
-import com.jcwhatever.bukkit.generic.regions.IRegion;
-import com.jcwhatever.bukkit.generic.storage.DataBatchOperation;
-import com.jcwhatever.bukkit.generic.storage.IDataNode;
-import com.jcwhatever.bukkit.generic.utils.PreCon;
+import com.jcwhatever.generic.GenericsLib;
+import com.jcwhatever.generic.mixins.IDisposable;
+import com.jcwhatever.generic.regions.IRegion;
+import com.jcwhatever.generic.storage.DataBatchOperation;
+import com.jcwhatever.generic.storage.IDataNode;
+import com.jcwhatever.generic.utils.PreCon;
 
 import org.bukkit.Location;
 

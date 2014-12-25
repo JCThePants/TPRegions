@@ -24,12 +24,12 @@
 
 package com.jcwhatever.bukkit.tpregions.commands;
 
-import com.jcwhatever.bukkit.generic.commands.AbstractCommand;
-import com.jcwhatever.bukkit.generic.commands.CommandInfo;
-import com.jcwhatever.bukkit.generic.commands.arguments.CommandArguments;
-import com.jcwhatever.bukkit.generic.commands.exceptions.CommandException;
-import com.jcwhatever.bukkit.generic.language.Localizable;
-import com.jcwhatever.bukkit.generic.utils.text.TextUtils;
+import com.jcwhatever.generic.commands.AbstractCommand;
+import com.jcwhatever.generic.commands.CommandInfo;
+import com.jcwhatever.generic.commands.arguments.CommandArguments;
+import com.jcwhatever.generic.commands.exceptions.CommandException;
+import com.jcwhatever.generic.language.Localizable;
+import com.jcwhatever.generic.utils.text.TextUtils;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;

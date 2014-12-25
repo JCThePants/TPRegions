@@ -1,6 +1,6 @@
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.bukkit.generic.language.Localized;
+import com.jcwhatever.generic.language.Localized;
 
 /**
  * Utility to reduce the amount of code needed to use the language manager.

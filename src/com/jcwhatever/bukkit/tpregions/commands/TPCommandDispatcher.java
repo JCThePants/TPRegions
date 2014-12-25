@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.tpregions.commands;
 
-import com.jcwhatever.bukkit.generic.commands.CommandDispatcher;
+import com.jcwhatever.generic.commands.CommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.commands.list.ListCommand;
 
