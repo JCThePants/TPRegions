@@ -2,7 +2,7 @@ name: TPRegions
 author: JCThePants
 main: com.jcwhatever.bukkit.tpregions.TPRegions
 version: 0.0-beta
-depend: [GenericsLib]
+depend: [NucleusFramework]
 commands:
     tpr:
         aliases: [tpregions]
