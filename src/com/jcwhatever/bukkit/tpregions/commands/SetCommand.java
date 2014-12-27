@@ -69,7 +69,7 @@ public class SetCommand extends AbstractCommand {
         // Portal Location
         if (args.getString("destination").equals("$location")) {
 
-            CommandException.assertNotConsole(this, sender);
+            CommandException.checkNotConsole(this, sender);
 
             Player p = (Player)sender;
             Location location = p.getLocation();
