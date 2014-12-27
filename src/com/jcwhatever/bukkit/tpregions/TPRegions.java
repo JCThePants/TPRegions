@@ -24,13 +24,13 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.generic.GenericsPlugin;
+import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.bukkit.tpregions.commands.TPCommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
 
 import org.bukkit.ChatColor;
 
-public class TPRegions  extends GenericsPlugin {
+public class TPRegions  extends NucleusPlugin {
 
     private static TPRegions _instance;
 

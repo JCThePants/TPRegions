@@ -24,7 +24,7 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.generic.utils.text.TextUtils;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Location;
 import org.bukkit.World;

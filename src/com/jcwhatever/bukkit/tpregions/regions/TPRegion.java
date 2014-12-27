@@ -24,11 +24,11 @@
 
 package com.jcwhatever.bukkit.tpregions.regions;
 
-import com.jcwhatever.generic.regions.Region;
-import com.jcwhatever.generic.regions.selection.IRegionSelection;
-import com.jcwhatever.generic.storage.IDataNode;
-import com.jcwhatever.generic.utils.LocationUtils;
-import com.jcwhatever.generic.utils.PreCon;
+import com.jcwhatever.nucleus.regions.Region;
+import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.ITPDestination;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
