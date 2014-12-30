@@ -63,6 +63,7 @@ public class DelCommand extends AbstractCommand {
 
         if (!TPRegions.getRegionManager().remove(regionName)) {
             tellError(sender, Lang.get(_FAILED, regionName));
+            return; // finish
         }
 
         tellSuccess(sender, Lang.get(_SUCCESS, regionName));
