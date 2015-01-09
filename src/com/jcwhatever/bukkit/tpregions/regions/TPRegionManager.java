@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -211,13 +210,8 @@ public class TPRegionManager implements IDisposable {
     // load regions from data node
     private void loadRegions() {
 
-        Set<String> regionNames = _dataNode.getSubNodeNames();
-        if (regionNames == null || regionNames.isEmpty())
-            return;
-
-
-        for (String regionName : regionNames) {
-            loadRegion(regionName, _dataNode.getNode(regionName));
+        for (IDataNode node : _dataNode) {
+            loadRegion(node.getName(), node);
         }
 
         for (TPRegion region : _regionMap.values()) {
