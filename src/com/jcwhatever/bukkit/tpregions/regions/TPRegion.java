@@ -135,7 +135,7 @@ public class TPRegion extends Region implements ITPDestination {
 
         //noinspection ConstantConditions
         getDataNode().set("enabled", isEnabled);
-        getDataNode().saveAsync(null);
+        getDataNode().save();
 
         updatePlayerWatcher();
     }
@@ -157,7 +157,7 @@ public class TPRegion extends Region implements ITPDestination {
 
         //noinspection ConstantConditions
         getDataNode().set("yaw", _yaw);
-        getDataNode().saveAsync(null);
+        getDataNode().save();
     }
 
     /**
@@ -191,7 +191,7 @@ public class TPRegion extends Region implements ITPDestination {
             getDataNode().remove("destination");
         }
 
-        getDataNode().saveAsync(null);
+        getDataNode().save();
 
         updatePlayerWatcher();
     }

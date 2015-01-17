@@ -175,7 +175,7 @@ public class TPRegionManager implements IDisposable {
             return false;
 
         _dataNode.set(region.getName(), null);
-        _dataNode.saveAsync(null);
+        _dataNode.save();
 
         region.dispose();
         _regionMap.remove(region.getSearchName());
