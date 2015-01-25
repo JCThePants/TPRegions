@@ -48,10 +48,15 @@ import org.bukkit.entity.Player;
 
 public class CreateCommand extends AbstractCommand {
 
-    @Localizable static final String _ALREADY_EXISTS = "There is already a teleport region or portal with the " +
+    @Localizable static final String _ALREADY_EXISTS =
+            "There is already a teleport region or portal with the " +
             "name '{0 : region name}'.";
-    @Localizable static final String _FAILED = "Failed to create a new region.";
-    @Localizable static final String _SUCCESS = "New teleport region named '{0: region name}' created. " +
+
+    @Localizable static final String _FAILED =
+            "Failed to create a new region.";
+
+    @Localizable static final String _SUCCESS =
+            "New teleport region named '{0: region name}' created. " +
             "Set the destination using '/tpr set ?'";
 
     @Override

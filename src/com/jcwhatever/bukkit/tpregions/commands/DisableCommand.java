@@ -45,13 +45,16 @@ import org.bukkit.command.CommandSender;
 
 public class DisableCommand extends AbstractCommand {
 
-    @Localizable static final String _NOT_FOUND = "A teleport region or portal with the name '{0: region name}' was not found.";
-    @Localizable static final String _DISABLED = "Teleport region '{0: region name}' {RED}Disabled.";
+    @Localizable static final String _NOT_FOUND =
+            "A teleport region or portal with the name '{0: region name}' was not found.";
+
+    @Localizable static final String _DISABLED =
+            "Teleport region '{0: region name}' {RED}Disabled.";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
-        String regionName = args.getName("regionName", 32);
+        String regionName = args.getString("regionName");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
         if (region == null) {

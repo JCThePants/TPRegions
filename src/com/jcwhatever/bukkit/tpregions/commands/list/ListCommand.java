@@ -49,8 +49,12 @@ import java.util.List;
 
 public class ListCommand extends AbstractCommand {
 
-    @Localizable static final String _PAGINATOR_TITLE = "Teleport Regions/Portals";
-    @Localizable static final String _LIST_ITEM_DESCRIPTION = "Type: {0: type}, destination: {1: destination name}";
+    @Localizable static final String _PAGINATOR_TITLE =
+            "Teleport Regions/Portals";
+
+    @Localizable static final String _LIST_ITEM_DESCRIPTION =
+            "Type: {0: type}, destination: {1: destination name}";
+
     @Localizable static final String _LABEL_NOT_SET = "not set";
 
     public ListCommand () {

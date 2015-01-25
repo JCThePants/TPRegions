@@ -53,7 +53,7 @@ public class DelCommand extends AbstractCommand {
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
-        String regionName = args.getName("regionName", 32);
+        String regionName = args.getString("regionName");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
         if (region == null) {

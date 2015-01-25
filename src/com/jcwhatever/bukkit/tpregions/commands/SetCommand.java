@@ -51,14 +51,19 @@ import org.bukkit.entity.Player;
 
 public class SetCommand extends AbstractCommand {
 
-    @Localizable static final String _NOT_FOUND = "Failed to find a teleport region named '{0: region name}'.";
-    @Localizable static final String _SET_LOCATION = "Teleport region '{0: region name}' destination set to location:";
-    @Localizable static final String _SET_REGION = "Teleport region '{0: region name}' destination set to region '{1: destination name}'.";
+    @Localizable static final String _NOT_FOUND =
+            "Failed to find a teleport region named '{0: region name}'.";
+
+    @Localizable static final String _SET_LOCATION =
+            "Teleport region '{0: region name}' destination set to location:";
+
+    @Localizable static final String _SET_REGION =
+            "Teleport region '{0: region name}' destination set to region '{1: destination name}'.";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
-        String regionName = args.getName("regionName", 32);
+        String regionName = args.getString("regionName");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
         if (region == null) {

@@ -46,13 +46,16 @@ import org.bukkit.command.CommandSender;
 
 public class SetYawCommand extends AbstractCommand {
 
-    @Localizable static final String _NOT_FOUND = "A teleport region with the name '{0: region name}' was not found.";
-    @Localizable static final String _SUCCESS = "Teleport region '{0: region name}' yaw adjustment set to {1: yaw} degrees.";
+    @Localizable static final String _NOT_FOUND =
+            "A teleport region with the name '{0: region name}' was not found.";
+
+    @Localizable static final String _SUCCESS =
+            "Teleport region '{0: region name}' yaw adjustment set to {1: yaw} degrees.";
 
     @Override
     public void execute(CommandSender sender, CommandArguments args) throws CommandException {
 
-        String regionName = args.getName("regionName", 32);
+        String regionName = args.getString("regionName");
         float yaw = args.getFloat("yaw");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);

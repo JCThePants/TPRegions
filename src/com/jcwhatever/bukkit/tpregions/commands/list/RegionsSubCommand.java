@@ -51,8 +51,12 @@ import java.util.List;
 
 public class RegionsSubCommand extends AbstractCommand {
 
-    @Localizable static final String _PAGINATOR_TITLE = "Teleport Regions/Portals";
-    @Localizable static final String _LIST_ITEM_DESCRIPTION = "Type: {0: type}, destination: {1: destination name}";
+    @Localizable static final String _PAGINATOR_TITLE =
+            "Teleport Regions/Portals";
+
+    @Localizable static final String _LIST_ITEM_DESCRIPTION =
+            "Type: {0: type}, destination: {1: destination name}";
+
     @Localizable static final String _LABEL_NOT_SET = "not set";
 
     @Override
@@ -70,7 +74,9 @@ public class RegionsSubCommand extends AbstractCommand {
 
             pagin.add(region.getName(),
                     Lang.get(_LIST_ITEM_DESCRIPTION, region.getType().name(),
-                            (region.getDestination() != null ? region.getDestination() : Lang.get(_LABEL_NOT_SET))));
+                            (region.getDestination() != null
+                                    ? region.getDestination()
+                                    : Lang.get(_LABEL_NOT_SET))));
         }
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
