@@ -64,7 +64,7 @@ public class TPRegion extends Region implements ITPDestination {
     private Set<UUID> _received;
     private boolean _isEnabled = true;
     private float _yaw = 0.0F;
-    Set<BlockState> _portalBlocks = new HashSet<BlockState>(100);
+    Set<BlockState> _portalBlocks = new HashSet<BlockState>(25);
 
     /**
      * Constructor.
