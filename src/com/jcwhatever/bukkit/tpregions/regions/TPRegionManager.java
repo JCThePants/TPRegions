@@ -26,7 +26,6 @@ package com.jcwhatever.bukkit.tpregions.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.storage.DataBatchOperation;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
@@ -112,15 +111,11 @@ public class TPRegionManager implements IDisposable {
     public TPRegion getRegionAt(Location location) {
         PreCon.notNull(location);
 
-        List<IRegion> regions = Nucleus.getRegionManager().getRegions(location);
+        List<TPRegion> regions = Nucleus.getRegionManager().getRegions(location, TPRegion.class);
+        if (regions.isEmpty())
+            return null;
 
-        for (IRegion region : regions) {
-            if (region.getRegionClass().equals(TPRegion.class)) {
-                return getRegion(region.getName());
-            }
-        }
-
-        return null;
+        return regions.get(0);
     }
 
     /**
