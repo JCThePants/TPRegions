@@ -24,14 +24,19 @@
 
 package com.jcwhatever.bukkit.tpregions.regions;
 
-import com.jcwhatever.nucleus.regions.Region;
-import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
-import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.LocationUtils;
-import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.ITPDestination;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
+import com.jcwhatever.nucleus.regions.Region;
+import com.jcwhatever.nucleus.regions.data.RegionShape.Flatness;
+import com.jcwhatever.nucleus.regions.data.RegionShape.FlatnessPosition;
+import com.jcwhatever.nucleus.regions.data.RegionShape.ShapeDirection;
+import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.storage.IDataNode;
+import com.jcwhatever.nucleus.utils.LocationUtils;
+import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -60,6 +65,8 @@ import javax.annotation.Nullable;
  */
 public class TPRegion extends Region implements ITPDestination {
 
+    public static final MetaKey<TPRegion> REGION_META_KEY = new MetaKey<TPRegion>(TPRegion.class);
+
     private ITPDestination _destination;
     private Set<UUID> _received;
     private boolean _isEnabled = true;
@@ -78,6 +85,8 @@ public class TPRegion extends Region implements ITPDestination {
         PreCon.notNull(dataNode);
 
         _received = new HashSet<>(5);
+
+        setMeta(REGION_META_KEY, this);
     }
 
     /**
@@ -107,6 +116,9 @@ public class TPRegion extends Region implements ITPDestination {
         }
 
         updatePlayerWatcher();
+
+        if (_isEnabled)
+            openPortal();
     }
 
     /**
@@ -114,7 +126,10 @@ public class TPRegion extends Region implements ITPDestination {
      * an invisible region.
      */
     public RegionType getType() {
-        return isFlatHorizontal() || isFlatVertical() ? RegionType.PORTAL : RegionType.REGION;
+        return getShape().getPosition() != FlatnessPosition.NONE &&
+                getShape().getFlatness() == Flatness.FLAT
+                ? RegionType.PORTAL
+                : RegionType.REGION;
     }
 
     /**
@@ -233,6 +248,94 @@ public class TPRegion extends Region implements ITPDestination {
 
     }
 
+    public void openPortal() {
+
+        if (getType() != RegionType.PORTAL)
+            return;
+
+        final World world = getWorld();
+
+        if (world == null ||
+                getShape().getFlatness() != Flatness.FLAT) {
+            return;
+        }
+
+        _portalBlocks.clear();
+
+        // delay ensures portal blocks don't disappear when the server first starts
+        Scheduler.runTaskLater(TPRegions.getPlugin(), 10, new Runnable() {
+            @Override
+            public void run() {
+
+                final Material portalMaterial = getShape().getPosition() == FlatnessPosition.VERTICAL
+                        ? Material.PORTAL
+                        : Material.ENDER_PORTAL;
+
+                for (int y = getYEnd(); y >= getYStart(); y--) {
+                    for (int x = getXStart(); x <= getXEnd(); x++) {
+                        for (int z = getZStart(); z <= getZEnd(); z++) {
+                            Block block = world.getBlockAt(x, y, z);
+
+                            if (block.getType() == Material.AIR ||
+                                    (block.getType() == Material.PORTAL && portalMaterial == Material.ENDER_PORTAL) ||
+                                    (block.getType() == Material.ENDER_PORTAL && portalMaterial == Material.PORTAL)) {
+                                block.setType(Material.GLOWSTONE);
+                                _portalBlocks.add(block.getState());
+
+                            }
+                        }
+                    }
+                }
+
+                for (BlockState block : _portalBlocks) {
+                    block.setType(portalMaterial);
+
+                    if (getShape().getDirection() == ShapeDirection.WEST_EAST) {
+                        block.setRawData((byte) 2);
+                    }
+                    else {
+                        block.setRawData((byte) 0);
+                    }
+
+                    block.update(true);
+                }
+            }
+        });
+    }
+
+    // Remove the portal blocks
+    public void closePortal() {
+
+        if (getType() != RegionType.PORTAL)
+            return;
+
+        World world = getWorld();
+
+        if (world == null)
+            return;
+
+        _portalBlocks.clear();
+
+        for (int y = getYEnd(); y >= getYStart(); y--) {
+            for (int x = getXStart(); x <= getXEnd(); x++) {
+                for (int z = getZStart(); z <= getZEnd(); z++) {
+
+                    Block block = world.getBlockAt(x, y, z);
+
+                    if (block.getType() == Material.PORTAL ||
+                            block.getType() == Material.ENDER_PORTAL) {
+
+                        BlockState state = block.getState();
+                        state.setType(Material.AIR);
+                        state.update(true);
+                    }
+                }
+            }
+        }
+
+        refreshChunks();
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -274,78 +377,6 @@ public class TPRegion extends Region implements ITPDestination {
     @Override
     protected void onDispose() {
         closePortal();
-    }
-
-    private void openPortal() {
-
-        if (getType() != RegionType.PORTAL)
-            return;
-
-        World world = getWorld();
-
-        if (world == null || !(isFlatHorizontal() || isFlatVertical()))
-            return;
-
-        _portalBlocks.clear();
-
-        final Material portalMaterial = isFlatVertical() ? Material.PORTAL : Material.ENDER_PORTAL;
-
-        for (int y = getYEnd(); y >= getYStart(); y--) {
-            for (int x = getXStart(); x <= getXEnd(); x++) {
-                for (int z = getZStart(); z <= getZEnd(); z++) {
-                    Block block = world.getBlockAt(x, y, z);
-
-                    if (block.getType() == Material.AIR ||
-                            (block.getType() == Material.PORTAL && portalMaterial == Material.ENDER_PORTAL) ||
-                            (block.getType() == Material.ENDER_PORTAL && portalMaterial == Material.PORTAL)) {
-                        block.setType(Material.GLOWSTONE);
-                        _portalBlocks.add(block.getState());
-
-                    }
-                }
-            }
-        }
-
-        for (BlockState block : _portalBlocks) {
-            block.setType(portalMaterial);
-        }
-
-        for (BlockState block : _portalBlocks) {
-            block.update(true);
-        }
-    }
-
-    // Remove the portal blocks
-    private void closePortal() {
-
-        if (getType() != RegionType.PORTAL)
-            return;
-
-        World world = getWorld();
-
-        if (world == null)
-            return;
-
-        _portalBlocks.clear();
-
-        for (int y = getYEnd(); y >= getYStart(); y--) {
-            for (int x = getXStart(); x <= getXEnd(); x++) {
-                for (int z = getZStart(); z <= getZEnd(); z++) {
-
-                    Block block = world.getBlockAt(x, y, z);
-
-                    if (block.getType() == Material.PORTAL ||
-                            block.getType() == Material.ENDER_PORTAL) {
-
-                        BlockState state = block.getState();
-                        state.setType(Material.AIR);
-                        state.update(true);
-                    }
-                }
-            }
-        }
-
-        refreshChunks();
     }
 
     // update the player watcher state and open or close the portal
