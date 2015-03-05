@@ -24,30 +24,33 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.bukkit.tpregions.commands.TPCommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+import com.jcwhatever.nucleus.NucleusPlugin;
 
 import org.bukkit.ChatColor;
 
+/**
+ * Teleport Regions Bukkit plugin.
+ */
 public class TPRegions  extends NucleusPlugin {
 
     private static TPRegions _instance;
 
     private TPRegionManager _regionManager;
 
+    /**
+     * Get the current plugin instance.
+     */
     public static TPRegions getPlugin() {
         return _instance;
     }
 
+    /**
+     * Get the region manager.
+     */
     public static TPRegionManager getRegionManager() {
         return _instance._regionManager;
-    }
-
-    public TPRegions() {
-        super();
-
-        _instance = this;
     }
 
     @Override
@@ -63,6 +66,8 @@ public class TPRegions  extends NucleusPlugin {
     @Override
     protected void onEnablePlugin() {
 
+        _instance = this;
+
         _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
 
         registerCommands(new TPCommandDispatcher());
@@ -72,6 +77,8 @@ public class TPRegions  extends NucleusPlugin {
     @Override
     protected void onDisablePlugin() {
         _regionManager.dispose();
+
+        _instance = null;
     }
 }
 

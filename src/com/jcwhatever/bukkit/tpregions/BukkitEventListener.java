@@ -25,9 +25,13 @@
 package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.nucleus.Nucleus;
+import com.jcwhatever.nucleus.regions.IRegion;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -37,8 +41,12 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
+import java.util.List;
 import javax.annotation.Nullable;
 
 public class BukkitEventListener implements Listener {
@@ -107,6 +115,58 @@ public class BukkitEventListener implements Listener {
                 return;
             }
         }
+    }
+
+    // send non-player entities to a portals destination.
+    @EventHandler
+    private void onEntityPortal(EntityPortalEvent event) {
+        Entity entity = event.getEntity();
+
+        if (entity instanceof Player)
+            return;
+
+        if (entity.getPassenger() != null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        Location from = event.getPortalTravelAgent().findPortal(event.getFrom());
+
+        TPRegion region = getRegion(from);
+        if (region == null || !region.isEnabled())
+            return;
+
+        event.setCancelled(true);
+
+        ITPDestination destination = region.getDestination();
+        if (destination == null)
+            return;
+
+        destination.teleport(region, entity, 0f);
+    }
+
+    // keep portal region chunks loaded.
+    @EventHandler
+    private void onChunkUnload(ChunkUnloadEvent event) {
+
+        List<IRegion> regions = Nucleus.getRegionManager().getRegionsInChunk(event.getChunk());
+
+        for (IRegion region : regions) {
+            if (region.getMeta(TPRegion.REGION_META_KEY) != null) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    // prevent spawn restrictions from preventing a mounted mob from
+    // being teleported with a player.
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onMountedEntitySpawn(EntitySpawnEvent event) {
+        if (!event.isCancelled())
+            return;
+
+        if (Teleporter.isCrossWorldTeleporting(event.getEntity()))
+            event.setCancelled(false);
     }
 
     @Nullable

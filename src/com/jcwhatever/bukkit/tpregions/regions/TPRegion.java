@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.tpregions.regions;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.ITPDestination;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
+import com.jcwhatever.bukkit.tpregions.Teleporter;
 import com.jcwhatever.nucleus.regions.Region;
 import com.jcwhatever.nucleus.regions.data.RegionShape.Flatness;
 import com.jcwhatever.nucleus.regions.data.RegionShape.FlatnessPosition;
@@ -38,15 +39,13 @@ import com.jcwhatever.nucleus.utils.MetaKey;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -132,9 +131,6 @@ public class TPRegion extends Region implements ITPDestination {
                 : RegionType.REGION;
     }
 
-    /**
-     * Determine if the region is enabled.
-     */
     @Override
     public boolean isEnabled() {
         return _isEnabled;
@@ -211,41 +207,20 @@ public class TPRegion extends Region implements ITPDestination {
         updatePlayerWatcher();
     }
 
-
-    /**
-     * Send a player to the {@code TPRegion} destination.
-     *
-     * @param sender  The {@code ITPDestination} that the player is being received from.
-     * @param p       The player to teleport.
-     * @param yaw     The desired yaw adjustment.
-     */
     @Override
-    public void teleport(@Nullable ITPDestination sender, final Player p, float yaw) {
-        PreCon.notNull(p);
+    public void teleport(@Nullable ITPDestination sender, Entity entity, float yaw) {
+        PreCon.notNull(entity);
 
-        if (_received.contains(p.getUniqueId()) && sender == this)
+        if (_received.contains(entity.getUniqueId()) && sender == this)
             return;
 
-        final Location destination = getDestination(sender, p, yaw);
+        Location destination = getDestination(sender, entity, yaw);
         if (destination == null)
             return;
 
-        _received.add(p.getUniqueId());
+        _received.add(entity.getUniqueId());
 
-        final GameMode gm = p.getGameMode();
-        final Vector v = p.getVelocity();
-
-        Bukkit.getScheduler().runTaskLater(TPRegions.getPlugin(), new Runnable() {
-
-            @Override
-            public void run() {
-                p.teleport(destination);
-                p.setGameMode(gm);
-                p.setVelocity(v);
-            }
-
-        }, 1);
-
+        Teleporter.teleport(entity, destination);
     }
 
     public void openPortal() {
@@ -395,9 +370,11 @@ public class TPRegion extends Region implements ITPDestination {
 
     // calculate a destination location
     @Nullable
-    private Location getDestination(@Nullable ITPDestination sender, Player p, float yaw) {
+    private Location getDestination(@Nullable ITPDestination sender, Entity entity, float yaw) {
         PreCon.notNull(sender);
-        PreCon.notNull(p);
+        PreCon.notNull(entity);
+
+        Location rootLocation = getLocation(entity);
 
         if (sender instanceof IRegionSelection) {
             IRegionSelection region = (IRegionSelection)sender;
@@ -407,10 +384,9 @@ public class TPRegion extends Region implements ITPDestination {
                 return null;
 
             Location senderCenter = region.getCenter();
-
             Location pLoc = Float.compare(yaw, 0F) == 0
-                    ? p.getLocation()
-                    : LocationUtils.rotate(senderCenter, p.getLocation(), 0.0D, yaw, 0.0D);
+                    ? rootLocation
+                    : LocationUtils.rotate(senderCenter, rootLocation, 0.0D, yaw, 0.0D);
 
             double x = pLoc.getX() - senderCenter.getX();
             double y = pLoc.getY() - senderCenter.getY();
@@ -428,8 +404,17 @@ public class TPRegion extends Region implements ITPDestination {
             if (center == null)
                 return null;
 
+            Location entityLocation = entity.getLocation(rootLocation);
+
             return new Location(getWorld(), center.getX(), getYStart(), center.getZ(),
-                    p.getLocation().getYaw() + yaw, p.getLocation().getPitch());
+                    entityLocation.getYaw() + yaw, entityLocation.getPitch());
         }
+    }
+
+    private Location getLocation(Entity entity) {
+        while (entity.getVehicle() != null) {
+            entity = entity.getVehicle();
+        }
+        return entity.getLocation();
     }
 }

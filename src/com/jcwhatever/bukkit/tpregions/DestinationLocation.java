@@ -24,11 +24,12 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
+import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import javax.annotation.Nullable;
 
@@ -74,29 +75,23 @@ public class DestinationLocation extends Location implements ITPDestination {
         super(world, x, y, z, yaw, pitch);
     }
 
-    /**
-     * Determine if the location is enabled as
-     * a teleport destination.
-     */
     @Override
     public boolean isEnabled() {
         return true;
     }
 
-    /**
-     * Teleport a player to the {@code DestinationLocation}.
-     *
-     * @param sender  Optional destination that is forwarding the player.
-     * @param p       The player to teleport.
-     * @param yaw     The yaw adjustment. Adjust the players yaw when they are teleported.
-     */
     @Override
-    public void teleport(@Nullable ITPDestination sender, Player p, float yaw) {
+    public void teleport(@Nullable ITPDestination sender, Entity entity, float yaw) {
+        PreCon.notNull(entity);
+
         Location destination = new Location(getWorld(),
                 getX(), getY(), getZ(),
                 getYaw(), getPitch());
 
-        p.teleport(destination);
+        if (!destination.getChunk().isLoaded())
+            destination.getChunk().load();
+
+        Teleporter.teleport(entity, destination);
     }
 
     @Override
