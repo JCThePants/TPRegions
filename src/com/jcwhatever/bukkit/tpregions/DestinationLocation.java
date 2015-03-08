@@ -38,6 +38,8 @@ import javax.annotation.Nullable;
  */
 public class DestinationLocation extends Location implements ITPDestination {
 
+    private static Location ENTITY_LOCATION = new Location(null, 0, 0, 0);
+
     /**
      * Convert a {@code Location} object to a new {@code DestinationLocation}.
      *
@@ -84,9 +86,13 @@ public class DestinationLocation extends Location implements ITPDestination {
     public void teleport(@Nullable ITPDestination sender, Entity entity, float yaw) {
         PreCon.notNull(entity);
 
+        Location entityLocation = entity.getLocation(ENTITY_LOCATION);
+
+        float destYaw = entityLocation.getYaw() - getYaw() + yaw;
+
         Location destination = new Location(getWorld(),
                 getX(), getY(), getZ(),
-                getYaw(), getPitch());
+                destYaw, entityLocation.getPitch());
 
         if (!destination.getChunk().isLoaded())
             destination.getChunk().load();
