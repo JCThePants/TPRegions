@@ -31,6 +31,7 @@ import com.jcwhatever.nucleus.regions.IRegion;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -125,7 +126,8 @@ public class BukkitEventListener implements Listener {
         if (entity instanceof Player)
             return;
 
-        if (entity.getPassenger() != null) {
+        if (entity.getPassenger() != null ||
+                (entity instanceof LivingEntity && ((LivingEntity) entity).isLeashed())) {
             event.setCancelled(true);
             return;
         }
