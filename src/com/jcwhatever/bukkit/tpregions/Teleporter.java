@@ -1,15 +1,20 @@
 package com.jcwhatever.bukkit.tpregions;
 
+import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
+import com.jcwhatever.nucleus.utils.player.PlayerStateSnapshot;
+import com.jcwhatever.nucleus.utils.player.PlayerUtils;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
@@ -64,6 +69,19 @@ public class Teleporter {
             entity = entity.getVehicle();
         }
         return entity;
+    }
+
+    /*
+     * Represents a leash from a player to an entity.
+     */
+    private static class LeashPair {
+        Player player;
+        LivingEntity leashed;
+
+        LeashPair(Player player, LivingEntity leashed) {
+            this.player = player;
+            this.leashed = leashed;
+        }
     }
 
     /*
@@ -130,15 +148,34 @@ public class Teleporter {
 
                     boolean isWorldChange = !entity.getWorld().equals(destination.getWorld());
                     final LinkedList<Entity> entities = new LinkedList<>();
+                    final LinkedList<LeashPair> leashedPairs = new LinkedList<>();
+                    final LinkedList<PlayerStateSnapshot> snapshots = new LinkedList<>();
 
                     while (relations.entity != null) {
 
-                        if (isWorldChange && !(relations.entity instanceof Player)) {
-                            _crossWorldTeleports.put(relations.entity, null);
-                            entities.add(relations.entity);
+                        Entity entity = relations.entity;
+
+                        if (isWorldChange) {
+
+                            if (entity instanceof Player) {
+                                snapshots.add(new PlayerStateSnapshot((Player) entity));
+                            } else {
+                                _crossWorldTeleports.put(entity, null);
+                                entities.add(entity);
+                            }
                         }
 
-                        relations.entity.teleport(destination);
+                        // teleport leashed entities
+                        if (entity instanceof Player) {
+                            Collection<Entity> leashed = LeashUtils.getLeashed((Player) entity);
+
+                            for (Entity leashEntity : leashed) {
+                                leashEntity.teleport(destination);
+                                leashedPairs.add(new LeashPair((Player) entity, (LivingEntity) leashEntity));
+                            }
+                        }
+
+                        entity.teleport(destination);
                         relations = relations.passenger;
                     }
 
@@ -152,6 +189,24 @@ public class Teleporter {
 
                             while (!entities.isEmpty()) {
                                 _crossWorldTeleports.remove(entities.remove());
+                            }
+
+                            // make sure leashes are not broken
+                            while (!leashedPairs.isEmpty()) {
+                                LeashPair pair = leashedPairs.remove();
+                                pair.leashed.setLeashHolder(pair.player);
+                            }
+
+                            // preserve player game mode and flight
+                            while (!snapshots.isEmpty()) {
+                                PlayerStateSnapshot snapshot = snapshots.remove();
+                                Player player = PlayerUtils.getPlayer(snapshot.getPlayerId());
+                                if (player == null)
+                                    continue;
+
+                                player.setGameMode(snapshot.getGameMode());
+                                player.setFlying(snapshot.isFlying());
+                                player.setAllowFlight(snapshot.isFlightAllowed());
                             }
                         }
                     });
