@@ -29,6 +29,7 @@ import com.jcwhatever.bukkit.tpregions.ITPDestination;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.Teleporter;
 import com.jcwhatever.nucleus.regions.Region;
+import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.data.RegionShape.Flatness;
 import com.jcwhatever.nucleus.regions.data.RegionShape.FlatnessPosition;
 import com.jcwhatever.nucleus.regions.data.RegionShape.ShapeDirection;
@@ -47,7 +48,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -55,8 +58,8 @@ import javax.annotation.Nullable;
 /**
  * A teleport region.
  *
- * <p>If the sending {@code ITPDestination} is a {@code IRegionSelection}, the player
- * is teleported to the coordinates that are the same as the {@code TPRegion} coordinates, relative to
+ * <p>If the sending {@link ITPDestination} is a {@link IRegionSelection}, the player
+ * is teleported to the coordinates that are the same as the {@link TPRegion} coordinates, relative to
  * the regions center.</p>
  *
  * <p>Where player Yaw is modified, the players yaw is rotated and the coordinates are rotated
@@ -70,7 +73,11 @@ public class TPRegion extends Region implements ITPDestination {
     private Set<UUID> _received;
     private boolean _isEnabled = true;
     private float _yaw = 0.0F;
-    Set<BlockState> _portalBlocks = new HashSet<BlockState>(25);
+    private Set<BlockState> _portalBlocks = new HashSet<BlockState>(25);
+    private Map<Integer, Integer> _widthXMap;
+    private Map<Integer, Integer> _widthZMap;
+    private Map<Integer, Integer> _heightMaxXMap;
+    private Map<Integer, Integer> _heightMaxZMap;
 
     /**
      * Constructor.
@@ -211,14 +218,16 @@ public class TPRegion extends Region implements ITPDestination {
     public void teleport(@Nullable ITPDestination sender, Entity entity, float yaw) {
         PreCon.notNull(entity);
 
-        if (_received.contains(entity.getUniqueId()) && sender == this)
+        final UUID id = entity.getUniqueId();
+
+        if (_received.contains(id) && sender == this)
             return;
 
         Location destination = getDestination(sender, entity, yaw);
         if (destination == null)
             return;
 
-        _received.add(entity.getUniqueId());
+        _received.add(id);
 
         Teleporter.teleport(entity, destination);
     }
@@ -237,6 +246,7 @@ public class TPRegion extends Region implements ITPDestination {
 
         _portalBlocks.clear();
 
+
         // delay ensures portal blocks don't disappear when the server first starts
         Scheduler.runTaskLater(TPRegions.getPlugin(), 10, new Runnable() {
             @Override
@@ -246,19 +256,91 @@ public class TPRegion extends Region implements ITPDestination {
                         ? Material.PORTAL
                         : Material.ENDER_PORTAL;
 
+                _widthXMap = new HashMap<>(getYHeight() + 1, 1.0f);
+                _widthZMap = new HashMap<>(getYHeight() + 1, 1.0f);
+                _heightMaxXMap = new HashMap<>(getXWidth() + 1, 1.0f);
+                _heightMaxZMap = new HashMap<>(getZWidth() + 1, 1.0f);
+
                 for (int y = getYEnd(); y >= getYStart(); y--) {
+
+                    ReadWidthMode xMode = ReadWidthMode.NONE;
+                    int minX = Integer.MAX_VALUE;
+                    int maxX = Integer.MIN_VALUE;
+                    int minXY = Integer.MAX_VALUE;
+                    int maxXY = Integer.MIN_VALUE;
+
                     for (int x = getXStart(); x <= getXEnd(); x++) {
+
+                        ReadWidthMode zMode = ReadWidthMode.NONE;
+                        int minZ = Integer.MAX_VALUE;
+                        int maxZ = Integer.MIN_VALUE;
+                        int minZY = Integer.MAX_VALUE;
+                        int maxZY = Integer.MIN_VALUE;
+
                         for (int z = getZStart(); z <= getZEnd(); z++) {
                             Block block = world.getBlockAt(x, y, z);
 
-                            if (block.getType() == Material.AIR ||
-                                    (block.getType() == Material.PORTAL && portalMaterial == Material.ENDER_PORTAL) ||
-                                    (block.getType() == Material.ENDER_PORTAL && portalMaterial == Material.PORTAL)) {
+                            Material material = block.getType();
+
+                            // check for valid portal location
+                            if (material == Material.AIR ||
+                                    material == Material.PORTAL ||
+                                    material == Material.ENDER_PORTAL) {
+
+                                switch (xMode) {
+                                    case NONE:
+                                        minX = x;
+                                        xMode = ReadWidthMode.STARTED;
+                                        break;
+                                    case STARTED:
+                                        maxX = x;
+                                        break;
+                                }
+
+                                switch (zMode) {
+                                    case NONE:
+                                        minZ = z;
+                                        zMode = ReadWidthMode.STARTED;
+                                        break;
+                                    case STARTED:
+                                        maxZ = z;
+                                        break;
+                                }
+
+                                minXY = Math.min(minXY, y);
+                                maxXY = Math.max(maxXY, y);
+
+                                minZY = Math.min(minZY, y);
+                                maxZY = Math.max(maxZY, y);
+
+                                // record min and max height on Z axis
+                                _heightMaxZMap.put(z, maxZY);
+                            }
+
+                            // check for valid location to insert a portal block
+                            if (material == Material.AIR ||
+                                    (material == Material.PORTAL && portalMaterial == Material.ENDER_PORTAL) ||
+                                    (material == Material.ENDER_PORTAL && portalMaterial == Material.PORTAL)) {
+
                                 block.setType(Material.GLOWSTONE);
                                 _portalBlocks.add(block.getState());
-
                             }
                         }
+
+                        // record width on Z axis for current Y height.
+                        if (zMode == ReadWidthMode.STARTED) {
+                            int widthZ = Math.abs(maxZ - minZ);
+                            _widthZMap.put(y, widthZ / 2);
+                        }
+
+                        // record min and max height on X axis
+                        _heightMaxXMap.put(x, maxXY);
+                    }
+
+                    // record width on X axis for current Y height.
+                    if (xMode == ReadWidthMode.STARTED) {
+                        int widthX = Math.abs(maxX - minX);
+                        _widthXMap.put(y, widthX / 2);
                     }
                 }
 
@@ -316,20 +398,13 @@ public class TPRegion extends Region implements ITPDestination {
         return getName();
     }
 
-    /**
-     * Determine if the region can handle a player entering.
-     */
     @Override
     protected boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
         return _isEnabled;
     }
 
-    /**
-     * Called when a player enters the region and {@code canDoPlayerEnter}
-     * returns true.
-     */
     @Override
-    protected void onPlayerEnter (Player p, EnterRegionReason reason) {
+    protected void onPlayerEnter(Player p, EnterRegionReason reason) {
 
         if (!(_destination == null || !_destination.isEnabled()) &&
                 !_received.contains(p.getUniqueId())) {
@@ -338,12 +413,8 @@ public class TPRegion extends Region implements ITPDestination {
         _received.remove(p.getUniqueId());
     }
 
-    /**
-     * Called when a player leaves the region and {@code canDoPlayerLeave}
-     * returns true.
-     */
     @Override
-    protected void onPlayerLeave (Player p, LeaveRegionReason reason) {
+    protected void onPlayerLeave(Player p, LeaveRegionReason reason) {
         // remove from received so if player re-enters the region they
         // can be teleported.
         _received.remove(p.getUniqueId());
@@ -384,19 +455,50 @@ public class TPRegion extends Region implements ITPDestination {
                 return null;
 
             Location senderCenter = region.getCenter();
+            if (senderCenter == null)
+                return null;
+
             Location pLoc = Float.compare(yaw, 0F) == 0
                     ? rootLocation
                     : LocationUtils.rotate(senderCenter, rootLocation, 0.0D, yaw, 0.0D);
 
             double x = pLoc.getX() - senderCenter.getX();
-            double y = pLoc.getY() - senderCenter.getY();
             double z = pLoc.getZ() - senderCenter.getZ();
 
+            // get height from bottom of portal to entity location
+            double height = rootLocation.getY() - region.getYStart();
+            double dy = Math.min(getYStart() + height, getYStart() + getYHeight() - 2);
+
+            if (getType() == RegionType.PORTAL) {
+
+                // adjust for possibly smaller destination portal
+
+                dy = adjustOffset(dy, x, _heightMaxXMap);
+                dy = adjustOffset(dy, z, _heightMaxZMap);
+
+                if (getShape() == RegionShape.FLAT_NORTH_SOUTH) {
+                    z = 0D;
+                    x = adjustX(x, dy);
+                } else if (getShape() == RegionShape.FLAT_WEST_EAST) {
+                    x = 0D;
+                    z = adjustZ(z, dy);
+                } else if (getShape() == RegionShape.FLAT_HORIZONTAL) {
+                    x = adjustX(x, dy);
+                    z = adjustZ(z, dy);
+                }
+            }
+
             double dx = localCenter.getX() + x;
-            double dy = localCenter.getY() + y;
             double dz = localCenter.getZ() + z;
 
-            return new Location(getWorld(), dx, dy, dz, pLoc.getYaw(), pLoc.getPitch());
+            Location location = new Location(getWorld(), dx, dy, dz, pLoc.getYaw(), pLoc.getPitch());
+
+            // put player on the ground if the player is not flying
+            if (!(entity instanceof Player) || !((Player) entity).isFlying()) {
+                location = LocationUtils.findSurfaceBelow(location);
+            }
+
+            return location;
         }
         else {
 
@@ -411,10 +513,41 @@ public class TPRegion extends Region implements ITPDestination {
         }
     }
 
+    private double adjustX(double x, double y) {
+        x = adjustOffset(x, y, _widthXMap);
+        x = adjustOffset(x, y + 1, _widthXMap);
+        x = adjustOffset(x, y + 2, _widthXMap);
+
+        return x;
+    }
+
+    private double adjustZ(double z, double y) {
+        z = adjustOffset(z, y, _widthZMap);
+        z = adjustOffset(z, y + 1, _widthZMap);
+        z = adjustOffset(z, y + 2, _widthZMap);
+
+        return z;
+    }
+
+    private double adjustOffset(double width, double y, Map<Integer, Integer> maxMap) {
+
+        Integer max = maxMap.get((int) y);
+
+        if (max != null && Math.abs(width) > max)
+            return max;
+
+        return width;
+    }
+
     private Location getLocation(Entity entity) {
         while (entity.getVehicle() != null) {
             entity = entity.getVehicle();
         }
         return entity.getLocation();
+    }
+
+    private enum ReadWidthMode {
+        NONE,
+        STARTED
     }
 }
