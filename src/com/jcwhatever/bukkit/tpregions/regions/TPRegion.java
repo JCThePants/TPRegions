@@ -496,6 +496,8 @@ public class TPRegion extends Region implements ITPDestination {
             // put player on the ground if the player is not flying
             if (!(entity instanceof Player) || !((Player) entity).isFlying()) {
                 location = LocationUtils.findSurfaceBelow(location);
+                if (location != null)
+                    location.add(0, 1, 0);
             }
 
             return location;
