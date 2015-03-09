@@ -127,10 +127,10 @@ public class BukkitEventListener implements Listener {
     private void onEntityPortal(EntityPortalEvent event) {
         Entity entity = event.getEntity();
 
-        if (entity instanceof Player)
+        if (entity instanceof Player && !entity.hasMetadata("NPC"))
             return;
 
-        if (entity.getPassenger() != null ||
+        if (entity.hasMetadata("NPC") || entity.getPassenger() != null ||
                 (entity instanceof LivingEntity && ((LivingEntity) entity).isLeashed())) {
             event.setCancelled(true);
             return;

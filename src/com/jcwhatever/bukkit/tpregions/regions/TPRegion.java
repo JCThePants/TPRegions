@@ -400,7 +400,7 @@ public class TPRegion extends Region implements ITPDestination {
 
     @Override
     protected boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
-        return _isEnabled;
+        return _isEnabled && !p.hasMetadata("NPC");
     }
 
     @Override
