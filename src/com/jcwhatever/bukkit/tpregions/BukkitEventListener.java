@@ -29,6 +29,8 @@ import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.regions.IRegion;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -51,6 +53,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class BukkitEventListener implements Listener {
+
+    private static final Location PORTAL_LOCATION = new Location(null, 0, 0, 0);
 
     // prevent mob spawning inside teleport regions.
     @EventHandler
@@ -132,7 +136,7 @@ public class BukkitEventListener implements Listener {
             return;
         }
 
-        Location from = event.getPortalTravelAgent().findPortal(event.getFrom());
+        Location from = findPortal(event.getFrom(), PORTAL_LOCATION);
 
         TPRegion region = getRegion(from);
         if (region == null || !region.isEnabled())
@@ -174,5 +178,37 @@ public class BukkitEventListener implements Listener {
     @Nullable
     private TPRegion getRegion(Location location) {
         return TPRegions.getRegionManager().getRegionAt(location);
+    }
+
+    // find portal since entity is teleported by portal before entering TPRegion.
+    @Nullable
+    private Location findPortal(Location location, Location output) {
+
+        int minX = location.getBlockX() - 1;
+        int maxX = location.getBlockX() + 1;
+        int minZ = location.getBlockZ() - 1;
+        int maxZ = location.getBlockZ() + 1;
+        int minY = location.getBlockY() - 1;
+        int maxY = location.getBlockY() + 1;
+
+        World world = location.getWorld();
+
+        for (int y = maxY; y >= minY; y--) {
+
+            for (int x = minX; x <= maxX; x++) {
+
+                for (int z = minZ; z <= maxZ; z++) {
+
+                    Block block = world.getBlockAt(x, y, z);
+                    Material material = block.getType();
+
+                    if (material == Material.PORTAL || material == Material.ENDER_PORTAL) {
+                        return block.getLocation(output);
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }
