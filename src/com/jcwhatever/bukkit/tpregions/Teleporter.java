@@ -185,7 +185,7 @@ public class Teleporter {
                             if (hasPassenger())
                                 mountAll();
 
-                            entity.setVelocity(velocity);
+                            //entity.setVelocity(velocity);
 
                             while (!entities.isEmpty()) {
                                 _crossWorldTeleports.remove(entities.remove());
