@@ -33,6 +33,8 @@ import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.data.RegionShape.Flatness;
 import com.jcwhatever.nucleus.regions.data.RegionShape.FlatnessPosition;
 import com.jcwhatever.nucleus.regions.data.RegionShape.ShapeDirection;
+import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
+import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
 import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.LocationUtils;
