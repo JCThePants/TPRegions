@@ -460,9 +460,15 @@ public class TPRegion extends Region implements ITPDestination {
             if (senderCenter == null)
                 return null;
 
-            Location pLoc = Float.compare(yaw, 0F) == 0
-                    ? rootLocation
-                    : LocationUtils.rotate(senderCenter, rootLocation, 0.0D, yaw, 0.0D);
+            Location pLoc;
+
+            if (Float.compare(yaw, 0F) == 0) {
+                pLoc = rootLocation;
+                pLoc.setYaw(yaw);
+            }
+            else {
+                pLoc = LocationUtils.rotate(senderCenter, rootLocation, 0.0D, yaw, 0.0D);
+            }
 
             double x = pLoc.getX() - senderCenter.getX();
             double z = pLoc.getZ() - senderCenter.getZ();
@@ -537,8 +543,12 @@ public class TPRegion extends Region implements ITPDestination {
 
         Integer max = maxMap.get((int) y);
 
-        if (max != null && Math.abs(width) > max)
-            return max;
+        if (max != null && Math.abs(width) > max) {
+
+            return width >= 0
+                    ? max
+                    : -max;
+        }
 
         return width;
     }
