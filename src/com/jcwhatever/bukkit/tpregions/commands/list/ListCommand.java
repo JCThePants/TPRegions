@@ -42,10 +42,13 @@ import java.util.List;
 @CommandInfo(
         command="list",
         staticParams={"page=1"},
+        floatingParams = {"search=" },
         description="List all regions and portals.",
 
         paramDescriptions = {
-                "page= {PAGE}"})
+                "page= {PAGE}",
+                "search= Optional. Specify a search filter."
+        })
 
 public class ListCommand extends AbstractCommand {
 
@@ -80,6 +83,9 @@ public class ListCommand extends AbstractCommand {
                     Lang.get(_LIST_ITEM_DESCRIPTION, region.getType().name(),
                             (region.getDestination() != null ? region.getDestination() : Lang.get(_LABEL_NOT_SET))));
         }
+
+        if (!args.isDefaultValue("search"))
+            pagin.setSearchTerm(args.getString("search"));
 
         pagin.show(sender, page, FormatTemplate.LIST_ITEM_DESCRIPTION);
     }
