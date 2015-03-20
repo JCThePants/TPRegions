@@ -39,6 +39,7 @@ import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.LocationUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
+import com.jcwhatever.nucleus.utils.NpcUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.Scheduler;
 
@@ -402,7 +403,7 @@ public class TPRegion extends Region implements ITPDestination {
 
     @Override
     protected boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
-        return _isEnabled && !p.hasMetadata("NPC");
+        return _isEnabled && !NpcUtils.isNpc(p);
     }
 
     @Override

@@ -27,6 +27,7 @@ package com.jcwhatever.bukkit.tpregions;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.regions.IRegion;
+import com.jcwhatever.nucleus.utils.NpcUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -127,10 +128,10 @@ public class BukkitEventListener implements Listener {
     private void onEntityPortal(EntityPortalEvent event) {
         Entity entity = event.getEntity();
 
-        if (entity instanceof Player && !entity.hasMetadata("NPC"))
+        if (entity instanceof Player && !NpcUtils.isNpc(entity))
             return;
 
-        if (entity.hasMetadata("NPC") || entity.getPassenger() != null ||
+        if (NpcUtils.isNpc(entity) || entity.getPassenger() != null ||
                 (entity instanceof LivingEntity && ((LivingEntity) entity).isLeashed())) {
             event.setCancelled(true);
             return;
