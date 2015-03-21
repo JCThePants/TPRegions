@@ -159,7 +159,7 @@ public class BukkitEventListener implements Listener {
         List<IRegion> regions = Nucleus.getRegionManager().getRegionsInChunk(event.getChunk());
 
         for (IRegion region : regions) {
-            if (region.getMeta(TPRegion.REGION_META_KEY) != null) {
+            if (region.getMeta().get(TPRegion.REGION_META_KEY) != null) {
                 event.setCancelled(true);
             }
         }
