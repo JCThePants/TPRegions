@@ -26,9 +26,16 @@ package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.bukkit.tpregions.commands.TPCommandDispatcher;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
+import com.jcwhatever.nucleus.mixins.IDisposable;
+import com.jcwhatever.nucleus.scripting.IEvaluatedScript;
+import com.jcwhatever.nucleus.scripting.IScriptApi;
+import com.jcwhatever.nucleus.scripting.SimpleScriptApi;
+import com.jcwhatever.nucleus.scripting.SimpleScriptApi.IApiObjectCreator;
 
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Teleport Regions Bukkit plugin.
@@ -38,6 +45,7 @@ public class TPRegions  extends NucleusPlugin {
     private static TPRegions _instance;
 
     private TPRegionManager _regionManager;
+    private IScriptApi _scriptApi;
 
     /**
      * Get the current plugin instance.
@@ -72,11 +80,22 @@ public class TPRegions  extends NucleusPlugin {
 
         registerCommands(new TPCommandDispatcher());
         registerEventListeners(new BukkitEventListener());
+
+        _scriptApi = new SimpleScriptApi(this, "tpregions", new IApiObjectCreator() {
+            @Override
+            public IDisposable create(Plugin plugin, IEvaluatedScript script) {
+                return new ScriptApi();
+            }
+        });
+
+        Nucleus.getScriptApiRepo().registerApi(_scriptApi);
     }
 
     @Override
     protected void onDisablePlugin() {
         _regionManager.dispose();
+
+        Nucleus.getScriptApiRepo().unregisterApi(_scriptApi);
 
         _instance = null;
     }

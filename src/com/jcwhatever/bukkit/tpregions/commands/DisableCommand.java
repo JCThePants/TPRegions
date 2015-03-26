@@ -62,7 +62,7 @@ public class DisableCommand extends AbstractCommand {
             return; // finish
         }
 
-        region.setIsEnabled(false);
+        region.setEnabled(false);
 
         tellSuccess(sender, Lang.get(_DISABLED, regionName));
     }

@@ -62,7 +62,7 @@ public class EnableCommand extends AbstractCommand {
             return; // finish
         }
 
-        region.setIsEnabled(true);
+        region.setEnabled(true);
 
         tellSuccess(sender, Lang.get(_ENABLED, regionName));
     }

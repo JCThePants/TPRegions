@@ -151,7 +151,7 @@ public class TPRegion extends Region implements ITPDestination {
      *
      * @param isEnabled  True to enable teleport.
      */
-    public void setIsEnabled(boolean isEnabled) {
+    public void setEnabled(boolean isEnabled) {
         _isEnabled = isEnabled;
 
         //noinspection ConstantConditions
