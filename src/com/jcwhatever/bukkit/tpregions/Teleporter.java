@@ -44,8 +44,9 @@ public class Teleporter {
      * @param destination  The destination location.
      */
     public static void teleport(Entity entity, Location destination) {
-        PreCon.notNull(entity);
-        PreCon.notNull(destination);
+        PreCon.notNull(entity, "entity");
+        PreCon.notNull(destination, "destination");
+        PreCon.notNull(destination.getWorld(), "destination world");
 
         new EntityRelations(getRootEntity(entity)).teleport(destination);
     }
@@ -56,7 +57,7 @@ public class Teleporter {
      * @param entity  The entity to check.
      */
     public static boolean isCrossWorldTeleporting(Entity entity) {
-        PreCon.notNull(entity);
+        PreCon.notNull(entity, "entity");
 
         return _crossWorldTeleports.containsKey(entity);
     }
@@ -89,6 +90,7 @@ public class Teleporter {
      * after transport.
      */
     private static class EntityRelations {
+
         Entity entity;
         Vector velocity;
         EntityRelations passenger;
