@@ -26,7 +26,6 @@ package com.jcwhatever.bukkit.tpregions.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IDisposable;
-import com.jcwhatever.nucleus.storage.DataBatchOperation;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.PreCon;
 
@@ -139,14 +138,7 @@ public class TPRegionManager implements IDisposable {
         IDataNode settings = _dataNode.getNode(name);
 
         final TPRegion region = new TPRegion(name, settings);
-
-        settings.runBatchOperation(new DataBatchOperation() {
-
-            @Override
-            public void run(IDataNode dataNode) {
-                region.setCoords(p1, p2);
-            }
-        });
+        region.setCoords(p1, p2);
 
         _regionMap.put(region.getSearchName(), region);
 
