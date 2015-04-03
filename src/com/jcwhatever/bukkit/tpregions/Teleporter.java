@@ -2,7 +2,7 @@ package com.jcwhatever.bukkit.tpregions;
 
 import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerStateSnapshot;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;

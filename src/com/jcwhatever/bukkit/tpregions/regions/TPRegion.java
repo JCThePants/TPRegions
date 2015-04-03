@@ -35,13 +35,13 @@ import com.jcwhatever.nucleus.regions.data.RegionShape.FlatnessPosition;
 import com.jcwhatever.nucleus.regions.data.RegionShape.ShapeDirection;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
-import com.jcwhatever.nucleus.regions.selection.IRegionSelection;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
-import com.jcwhatever.nucleus.utils.NpcUtils;
+import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.utils.Scheduler;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -403,7 +403,7 @@ public class TPRegion extends Region implements ITPDestination {
 
     @Override
     protected boolean canDoPlayerEnter(Player p, EnterRegionReason reason) {
-        return _isEnabled && !NpcUtils.isNpc(p);
+        return _isEnabled && !Npcs.isNpc(p);
     }
 
     @Override
