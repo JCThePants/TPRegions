@@ -1,6 +1,6 @@
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.nucleus.utils.language.Localized;
+import com.jcwhatever.nucleus.managed.language.Localized;
 
 /**
  * Utility to reduce the amount of code needed to use the language manager.
@@ -11,6 +11,6 @@ public class Lang {
 
     @Localized
     public static String get(String text, Object... params) {
-        return TPRegions.getPlugin().getLanguageManager().get(text, params);
+        return TPRegions.getPlugin().getLanguageContext().get(text, params);
     }
 }
