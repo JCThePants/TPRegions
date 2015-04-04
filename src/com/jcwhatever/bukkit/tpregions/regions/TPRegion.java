@@ -407,13 +407,13 @@ public class TPRegion extends Region implements ITPDestination {
     }
 
     @Override
-    protected void onPlayerEnter(Player p, EnterRegionReason reason) {
+    protected void onPlayerEnter(Player player, EnterRegionReason reason) {
 
         if (!(_destination == null || !_destination.isEnabled()) &&
-                !_received.contains(p.getUniqueId())) {
-            _destination.teleport(this, p, _yaw);
+                !_received.contains(player.getUniqueId())) {
+            _destination.teleport(this, player, _yaw);
         }
-        _received.remove(p.getUniqueId());
+        _received.remove(player.getUniqueId());
     }
 
     @Override
