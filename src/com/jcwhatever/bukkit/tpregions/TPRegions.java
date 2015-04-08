@@ -24,15 +24,21 @@
 
 package com.jcwhatever.bukkit.tpregions;
 
-import com.jcwhatever.bukkit.tpregions.commands.TPCommandDispatcher;
+import com.jcwhatever.bukkit.tpregions.commands.CreateCommand;
+import com.jcwhatever.bukkit.tpregions.commands.DelCommand;
+import com.jcwhatever.bukkit.tpregions.commands.DisableCommand;
+import com.jcwhatever.bukkit.tpregions.commands.EnableCommand;
+import com.jcwhatever.bukkit.tpregions.commands.SetCommand;
+import com.jcwhatever.bukkit.tpregions.commands.SetYawCommand;
+import com.jcwhatever.bukkit.tpregions.commands.list.ListCommand;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
-import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;
 import com.jcwhatever.nucleus.managed.scripting.IScriptApi;
 import com.jcwhatever.nucleus.managed.scripting.SimpleScriptApi;
 import com.jcwhatever.nucleus.managed.scripting.SimpleScriptApi.IApiObjectCreator;
+import com.jcwhatever.nucleus.mixins.IDisposable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -78,7 +84,14 @@ public class TPRegions  extends NucleusPlugin {
 
         _regionManager = new TPRegionManager(getDataNode().getNode("regions"));
 
-        registerCommands(new TPCommandDispatcher());
+        registerCommand(CreateCommand.class);
+        registerCommand(DelCommand.class);
+        registerCommand(DisableCommand.class);
+        registerCommand(EnableCommand.class);
+        registerCommand(ListCommand.class);
+        registerCommand(SetCommand.class);
+        registerCommand(SetYawCommand.class);
+
         registerEventListeners(new BukkitEventListener());
 
         _scriptApi = new SimpleScriptApi(this, "tpregions", new IApiObjectCreator() {

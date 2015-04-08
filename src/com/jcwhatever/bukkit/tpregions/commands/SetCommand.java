@@ -24,16 +24,17 @@
 
 package com.jcwhatever.bukkit.tpregions.commands;
 
-import com.jcwhatever.nucleus.commands.AbstractCommand;
-import com.jcwhatever.nucleus.commands.CommandInfo;
-import com.jcwhatever.nucleus.commands.arguments.CommandArguments;
-import com.jcwhatever.nucleus.commands.exceptions.CommandException;
-import com.jcwhatever.nucleus.managed.language.Localizable;
-import com.jcwhatever.nucleus.utils.text.TextUtils;
 import com.jcwhatever.bukkit.tpregions.DestinationLocation;
 import com.jcwhatever.bukkit.tpregions.Lang;
 import com.jcwhatever.bukkit.tpregions.TPRegions;
 import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.nucleus.managed.commands.CommandInfo;
+import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
+import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
+import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
+import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
+import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.utils.text.TextUtils;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -49,7 +50,7 @@ import org.bukkit.entity.Player;
                 "destination= The name of the destination region to teleport player to or leave blank to use" +
                         "your current location as the teleport location."})
 
-public class SetCommand extends AbstractCommand {
+public class SetCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _NOT_FOUND =
             "Failed to find a teleport region named '{0: region name}'.";
@@ -61,7 +62,7 @@ public class SetCommand extends AbstractCommand {
             "Teleport region '{0: region name}' destination set to region '{1: destination name}'.";
 
     @Override
-    public void execute(CommandSender sender, CommandArguments args) throws CommandException {
+    public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String regionName = args.getString("regionName");
 
@@ -74,7 +75,7 @@ public class SetCommand extends AbstractCommand {
         // Portal Location
         if (args.getString("destination").equals("$location")) {
 
-            CommandException.checkNotConsole(this, sender);
+            CommandException.checkNotConsole(getPlugin(), this, sender);
 
             Player p = (Player)sender;
             Location location = p.getLocation();
