@@ -57,15 +57,11 @@ public class DelCommand extends AbstractCommand implements IExecutableCommand {
         String regionName = args.getString("regionName");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-        if (region == null) {
-            tellError(sender, Lang.get(_NOT_FOUND, regionName));
-            return; // finish
-        }
+        if (region == null)
+            throw new CommandException(Lang.get(_NOT_FOUND, regionName));
 
-        if (!TPRegions.getRegionManager().remove(regionName)) {
-            tellError(sender, Lang.get(_FAILED, regionName));
-            return; // finish
-        }
+        if (!TPRegions.getRegionManager().remove(regionName))
+            throw new CommandException(Lang.get(_FAILED, regionName));
 
         tellSuccess(sender, Lang.get(_SUCCESS, regionName));
     }

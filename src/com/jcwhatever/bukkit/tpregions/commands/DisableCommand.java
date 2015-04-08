@@ -58,10 +58,8 @@ public class DisableCommand extends AbstractCommand implements IExecutableComman
         String regionName = args.getString("regionName");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-        if (region == null) {
-            tellError(sender, Lang.get(_NOT_FOUND, regionName));
-            return; // finish
-        }
+        if (region == null)
+            throw new CommandException(Lang.get(_NOT_FOUND, regionName));
 
         region.setEnabled(false);
 

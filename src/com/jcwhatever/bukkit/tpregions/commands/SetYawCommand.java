@@ -60,16 +60,13 @@ public class SetYawCommand extends AbstractCommand implements IExecutableCommand
         float yaw = args.getFloat("yaw");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-        if (region == null) {
-            tellError(sender, Lang.get(_NOT_FOUND, regionName));
-            return; // finish
-        }
+        if (region == null)
+            throw new CommandException(Lang.get(_NOT_FOUND, regionName));
 
         region.setYaw(yaw);
 
         tellSuccess(sender, Lang.get(_SUCCESS, regionName, yaw));
     }
-
 }
 
 

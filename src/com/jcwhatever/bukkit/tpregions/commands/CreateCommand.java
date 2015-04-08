@@ -68,21 +68,15 @@ public class CreateCommand extends AbstractCommand implements IExecutableCommand
         String regionName = args.getName("regionName", 32);
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-        if (region != null) {
-            tellError(sender, Lang.get(_ALREADY_EXISTS, regionName));
-            return; // finish
-        }
+        if (region != null)
+            throw new CommandException(Lang.get(_ALREADY_EXISTS, regionName));
 
         IRegionSelection sel = getRegionSelection((Player) sender);
-        if (sel == null)
-            return; // finish
 
         region = TPRegions.getRegionManager().add(regionName, sel.getP1(), sel.getP2());
 
-        if (region == null) {
-            tellError(sender, Lang.get(_FAILED));
-            return; // finish
-        }
+        if (region == null)
+            throw new CommandException(Lang.get(_FAILED));
 
         tellSuccess(sender, Lang.get(_SUCCESS, regionName));
     }

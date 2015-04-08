@@ -67,10 +67,8 @@ public class SetCommand extends AbstractCommand implements IExecutableCommand {
         String regionName = args.getString("regionName");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
-        if (region == null) {
-            tellError(sender, Lang.get(_NOT_FOUND, regionName));
-            return; // finish
-        }
+        if (region == null)
+            throw new CommandException(Lang.get(_NOT_FOUND, regionName));
 
         // Portal Location
         if (args.getString("destination").equals("$location")) {
@@ -91,10 +89,8 @@ public class SetCommand extends AbstractCommand implements IExecutableCommand {
             String name = args.getName("destination", 32);
 
             TPRegion destination = TPRegions.getRegionManager().getRegion(name);
-            if (destination == null) {
-                tellError(sender, Lang.get(_NOT_FOUND, name));
-                return; // finish
-            }
+            if (destination == null)
+                throw new CommandException(Lang.get(_NOT_FOUND, name));
 
             region.setDestination(destination);
 
