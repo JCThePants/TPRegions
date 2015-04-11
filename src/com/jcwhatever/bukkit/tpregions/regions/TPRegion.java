@@ -223,7 +223,7 @@ public class TPRegion extends Region implements ITPDestination {
 
         final UUID id = entity.getUniqueId();
 
-        if (_received.contains(id) || sender == this)
+        if (sender == this)
             return;
 
         Location destination = getDestination(sender, entity, yaw);
