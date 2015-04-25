@@ -1,8 +1,9 @@
 package com.jcwhatever.bukkit.tpregions;
 
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerStateSnapshot;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
@@ -172,12 +173,12 @@ public class Teleporter {
                             Collection<Entity> leashed = LeashUtils.getLeashed((Player) entity);
 
                             for (Entity leashEntity : leashed) {
-                                leashEntity.teleport(destination);
+                                LocationUtils.teleport(leashEntity, destination);
                                 leashedPairs.add(new LeashPair((Player) entity, (LivingEntity) leashEntity));
                             }
                         }
 
-                        entity.teleport(destination);
+                        LocationUtils.teleport(entity, destination);
                         relations = relations.passenger;
                     }
 
@@ -186,8 +187,6 @@ public class Teleporter {
                         public void run() {
                             if (hasPassenger())
                                 mountAll();
-
-                            //entity.setVelocity(velocity);
 
                             while (!entities.isEmpty()) {
                                 _crossWorldTeleports.remove(entities.remove());
