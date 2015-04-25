@@ -51,7 +51,7 @@ public class CreateCommand extends AbstractCommand implements IExecutableCommand
 
     @Localizable static final String _ALREADY_EXISTS =
             "There is already a teleport region or portal with the " +
-            "name '{0 : region name}'.";
+            "name '{0: region name}'.";
 
     @Localizable static final String _FAILED =
             "Failed to create a new region.";
