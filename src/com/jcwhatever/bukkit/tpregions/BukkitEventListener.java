@@ -58,7 +58,7 @@ public class BukkitEventListener implements Listener {
     private static final Location PORTAL_LOCATION = new Location(null, 0, 0, 0);
 
     // prevent mob spawning inside teleport regions.
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onCreatureSpawn(CreatureSpawnEvent event) {
 
         if (event.getSpawnReason() != SpawnReason.NETHER_PORTAL)
@@ -72,7 +72,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // prevent block physics inside teleport regions.
-    @EventHandler(priority=EventPriority.HIGH)
+    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     private void onBlockPhysics(BlockPhysicsEvent event) {
 
         TPRegion region = getRegion(event.getBlock().getLocation());
@@ -83,7 +83,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // prevent normal nether portal events in teleport regions.
-    @EventHandler(priority=EventPriority.HIGH)
+    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     private void onPlayerPortal(PlayerPortalEvent event) {
 
         TPRegion region = getRegion(event.getFrom());
@@ -92,7 +92,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // prevent damaging teleport region blocks.
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onBlockDamage(BlockDamageEvent event) {
 
         TPRegion region = getRegion(event.getBlock().getLocation());
@@ -101,7 +101,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // prevent breaking teleport region blocks.
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onBlockBreakEvent(BlockBreakEvent event) {
 
         TPRegion region = getRegion(event.getBlock().getLocation());
@@ -110,7 +110,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // prevent explosion damage to and near teleport region blocks.
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onEntityExplode(EntityExplodeEvent event) {
 
         for (Block block : event.blockList()) {
@@ -124,7 +124,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // send non-player entities to a portals destination.
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onEntityPortal(EntityPortalEvent event) {
         Entity entity = event.getEntity();
 
@@ -153,7 +153,7 @@ public class BukkitEventListener implements Listener {
     }
 
     // keep portal region chunks loaded.
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onChunkUnload(ChunkUnloadEvent event) {
 
         List<IRegion> regions = Nucleus.getRegionManager().getRegionsInChunk(event.getChunk());
