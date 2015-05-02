@@ -1,6 +1,6 @@
 name: TPRegions
 author: JCThePants
-main: TPRegions
+main: com.jcwhatever.tpregions.TPRegions
 version: 0.0-beta
 depend: [NucleusFramework]
 commands:
