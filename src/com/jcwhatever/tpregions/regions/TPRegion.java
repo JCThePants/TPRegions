@@ -22,12 +22,12 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions.regions;
+package com.jcwhatever.tpregions.regions;
 
-import com.jcwhatever.bukkit.tpregions.DestinationLocation;
-import com.jcwhatever.bukkit.tpregions.ITPDestination;
-import com.jcwhatever.bukkit.tpregions.TPRegions;
-import com.jcwhatever.bukkit.tpregions.Teleporter;
+import com.jcwhatever.tpregions.DestinationLocation;
+import com.jcwhatever.tpregions.ITPDestination;
+import com.jcwhatever.tpregions.TPRegions;
+import com.jcwhatever.tpregions.Teleporter;
 import com.jcwhatever.nucleus.regions.Region;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.data.RegionShape.Flatness;

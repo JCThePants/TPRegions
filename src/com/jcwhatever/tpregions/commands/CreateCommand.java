@@ -22,49 +22,62 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions.commands;
+package com.jcwhatever.tpregions.commands;
 
-import com.jcwhatever.bukkit.tpregions.Lang;
-import com.jcwhatever.bukkit.tpregions.TPRegions;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.tpregions.Lang;
+import com.jcwhatever.tpregions.TPRegions;
+import com.jcwhatever.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
 import com.jcwhatever.nucleus.managed.commands.mixins.IExecutableCommand;
 import com.jcwhatever.nucleus.managed.commands.utils.AbstractCommand;
 import com.jcwhatever.nucleus.managed.language.Localizable;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 @CommandInfo(
-        command="enable",
-        staticParams={"regionName"},
-        description="Enables a teleport region or portal.",
+        command="create",
+        staticParams = {"regionName"},
+        description="Create a teleport region or portal from your current region selection. " +
+                "Note that portals must be flat vertically or horizontally.",
 
         paramDescriptions = {
-                "regionName= The name of the region to enable."})
+                "regionName= The name of the region. {NAME}"})
 
-public class EnableCommand extends AbstractCommand implements IExecutableCommand {
+public class CreateCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable static final String _NOT_FOUND =
-            "A teleport region or portal with the name '{0: region name}' was not found.";
+    @Localizable static final String _ALREADY_EXISTS =
+            "There is already a teleport region or portal with the " +
+            "name '{0: region name}'.";
 
-    @Localizable static final String _ENABLED =
-            "Teleport region '{0: region name}' {GREEN}Enabled.";
+    @Localizable static final String _FAILED =
+            "Failed to create a new region.";
+
+    @Localizable static final String _SUCCESS =
+            "New teleport region named '{0: region name}' created. " +
+            "Set the destination using '/tpr set ?'";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
-        String regionName = args.getString("regionName");
+        CommandException.checkNotConsole(getPlugin(), this, sender);
+
+        String regionName = args.getName("regionName", 32);
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
+        if (region != null)
+            throw new CommandException(Lang.get(_ALREADY_EXISTS, regionName));
+
+        IRegionSelection sel = getRegionSelection((Player) sender);
+
+        region = TPRegions.getRegionManager().add(regionName, sel.getP1(), sel.getP2());
+
         if (region == null)
-            throw new CommandException(Lang.get(_NOT_FOUND, regionName));
+            throw new CommandException(Lang.get(_FAILED));
 
-        region.setEnabled(true);
-
-        tellSuccess(sender, Lang.get(_ENABLED, regionName));
+        tellSuccess(sender, Lang.get(_SUCCESS, regionName));
     }
 }
-
-

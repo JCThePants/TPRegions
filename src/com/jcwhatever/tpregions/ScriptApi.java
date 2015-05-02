@@ -1,6 +1,6 @@
-package com.jcwhatever.bukkit.tpregions;
+package com.jcwhatever.tpregions;
 
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.mixins.IDisposable;
 import com.jcwhatever.nucleus.utils.PreCon;
 

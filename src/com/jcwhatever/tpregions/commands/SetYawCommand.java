@@ -22,11 +22,11 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions.commands;
+package com.jcwhatever.tpregions.commands;
 
-import com.jcwhatever.bukkit.tpregions.Lang;
-import com.jcwhatever.bukkit.tpregions.TPRegions;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.tpregions.Lang;
+import com.jcwhatever.tpregions.TPRegions;
+import com.jcwhatever.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
@@ -37,33 +37,35 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
-        command="disable",
-        staticParams={"regionName"},
-        description="Disables a teleport region or portal.",
+        command="setyaw",
+        staticParams={"regionName", "yaw"},
+        description="Make adjustments to the players yaw angle when teleported from the specified region.",
 
         paramDescriptions = {
-                "regionName= The name of the region to disable."})
+                "regionName= The name of the region to set yaw adjustment on.",
+                "yaw= The yaw adjustment in degrees. Should be a multiple of 90. Range is 0-270."})
 
-public class DisableCommand extends AbstractCommand implements IExecutableCommand {
+public class SetYawCommand extends AbstractCommand implements IExecutableCommand {
 
     @Localizable static final String _NOT_FOUND =
-            "A teleport region or portal with the name '{0: region name}' was not found.";
+            "A teleport region with the name '{0: region name}' was not found.";
 
-    @Localizable static final String _DISABLED =
-            "Teleport region '{0: region name}' {RED}Disabled.";
+    @Localizable static final String _SUCCESS =
+            "Teleport region '{0: region name}' yaw adjustment set to {1: yaw} degrees.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
 
         String regionName = args.getString("regionName");
+        float yaw = args.getFloat("yaw");
 
         TPRegion region = TPRegions.getRegionManager().getRegion(regionName);
         if (region == null)
             throw new CommandException(Lang.get(_NOT_FOUND, regionName));
 
-        region.setEnabled(false);
+        region.setYaw(yaw);
 
-        tellSuccess(sender, Lang.get(_DISABLED, regionName));
+        tellSuccess(sender, Lang.get(_SUCCESS, regionName, yaw));
     }
 }
 

@@ -22,7 +22,7 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions;
+package com.jcwhatever.tpregions;
 
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;

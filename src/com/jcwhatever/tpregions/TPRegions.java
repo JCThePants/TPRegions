@@ -22,16 +22,16 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions;
+package com.jcwhatever.tpregions;
 
-import com.jcwhatever.bukkit.tpregions.commands.CreateCommand;
-import com.jcwhatever.bukkit.tpregions.commands.DelCommand;
-import com.jcwhatever.bukkit.tpregions.commands.DisableCommand;
-import com.jcwhatever.bukkit.tpregions.commands.EnableCommand;
-import com.jcwhatever.bukkit.tpregions.commands.SetCommand;
-import com.jcwhatever.bukkit.tpregions.commands.SetYawCommand;
-import com.jcwhatever.bukkit.tpregions.commands.list.ListCommand;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegionManager;
+import com.jcwhatever.tpregions.commands.CreateCommand;
+import com.jcwhatever.tpregions.commands.DelCommand;
+import com.jcwhatever.tpregions.commands.DisableCommand;
+import com.jcwhatever.tpregions.commands.EnableCommand;
+import com.jcwhatever.tpregions.commands.SetCommand;
+import com.jcwhatever.tpregions.commands.SetYawCommand;
+import com.jcwhatever.tpregions.commands.list.ListCommand;
+import com.jcwhatever.tpregions.regions.TPRegionManager;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.NucleusPlugin;
 import com.jcwhatever.nucleus.managed.scripting.IEvaluatedScript;

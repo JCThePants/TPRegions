@@ -22,11 +22,11 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions.commands;
+package com.jcwhatever.tpregions.commands;
 
-import com.jcwhatever.bukkit.tpregions.Lang;
-import com.jcwhatever.bukkit.tpregions.TPRegions;
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.tpregions.Lang;
+import com.jcwhatever.tpregions.TPRegions;
+import com.jcwhatever.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.managed.commands.CommandInfo;
 import com.jcwhatever.nucleus.managed.commands.arguments.ICommandArguments;
 import com.jcwhatever.nucleus.managed.commands.exceptions.CommandException;
@@ -36,20 +36,21 @@ import com.jcwhatever.nucleus.managed.language.Localizable;
 
 import org.bukkit.command.CommandSender;
 
-
 @CommandInfo(
-        command="del",
+        command="enable",
         staticParams={"regionName"},
-        description="Remove a teleport region or portal.",
+        description="Enables a teleport region or portal.",
 
         paramDescriptions = {
-                "regionName= The name of the region to remove."})
+                "regionName= The name of the region to enable."})
 
-public class DelCommand extends AbstractCommand implements IExecutableCommand {
+public class EnableCommand extends AbstractCommand implements IExecutableCommand {
 
-    @Localizable static final String _NOT_FOUND = "A teleport region or portal with the name '{0: region name}' was not found.";
-    @Localizable static final String _FAILED = "Failed to delete region or portal named '{0: region name}'.";
-    @Localizable static final String _SUCCESS = "Teleport region/portal '{0: region name}' deleted.";
+    @Localizable static final String _NOT_FOUND =
+            "A teleport region or portal with the name '{0: region name}' was not found.";
+
+    @Localizable static final String _ENABLED =
+            "Teleport region '{0: region name}' {GREEN}Enabled.";
 
     @Override
     public void execute(CommandSender sender, ICommandArguments args) throws CommandException {
@@ -60,10 +61,10 @@ public class DelCommand extends AbstractCommand implements IExecutableCommand {
         if (region == null)
             throw new CommandException(Lang.get(_NOT_FOUND, regionName));
 
-        if (!TPRegions.getRegionManager().remove(regionName))
-            throw new CommandException(Lang.get(_FAILED, regionName));
+        region.setEnabled(true);
 
-        tellSuccess(sender, Lang.get(_SUCCESS, regionName));
+        tellSuccess(sender, Lang.get(_ENABLED, regionName));
     }
 }
+
 

@@ -22,28 +22,22 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions;
-
-import org.bukkit.entity.Entity;
-
-import javax.annotation.Nullable;
+package com.jcwhatever.tpregions.regions;
 
 /**
- * Represents a destination that a player can be teleported to.
+ * Specifies the region type.
  */
-public interface ITPDestination {
-
+public enum RegionType {
     /**
-     * Determine if the destination is enabled.
+     * A region type is not available yet.
      */
-    public boolean isEnabled();
-
+    NONE,
     /**
-     * Teleport an {@link org.bukkit.entity.Entity} to the destination.
-     *
-     * @param sender  Optional destination that is forwarding the entity.
-     * @param entity  The entity to teleport.
-     * @param yaw     The yaw adjustment. Adjust the entities yaw when teleported.
+     * An invisible teleport region.
      */
-    public void teleport(@Nullable ITPDestination sender, Entity entity, float yaw);
+    REGION,
+    /**
+     * A visible portal region.
+     */
+    PORTAL
 }

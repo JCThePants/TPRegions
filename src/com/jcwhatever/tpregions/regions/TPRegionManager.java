@@ -22,7 +22,7 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions.regions;
+package com.jcwhatever.tpregions.regions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.mixins.IDisposable;

@@ -22,9 +22,9 @@
  */
 
 
-package com.jcwhatever.bukkit.tpregions;
+package com.jcwhatever.tpregions;
 
-import com.jcwhatever.bukkit.tpregions.regions.TPRegion;
+import com.jcwhatever.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.nucleus.providers.npc.Npcs;

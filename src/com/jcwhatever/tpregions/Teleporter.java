@@ -1,4 +1,4 @@
-package com.jcwhatever.bukkit.tpregions;
+package com.jcwhatever.tpregions;
 
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.LeashUtils;
