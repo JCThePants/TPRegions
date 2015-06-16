@@ -7,7 +7,6 @@ import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerStateSnapshot;
 import com.jcwhatever.nucleus.utils.player.PlayerUtils;
-
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -15,12 +14,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /*
  * 
@@ -168,17 +167,23 @@ public class Teleporter {
                             }
                         }
 
+                        // adjusted to prevent falling through floor
+                        Location adjusted = LocationUtils.copy(destination).add(0, 0.01, 0);
+
                         // teleport leashed entities
                         if (entity instanceof Player) {
                             Collection<Entity> leashed = LeashUtils.getLeashed((Player) entity);
 
                             for (Entity leashEntity : leashed) {
-                                LocationUtils.teleport(leashEntity, destination);
+                                leashEntity.teleport(adjusted);
                                 leashedPairs.add(new LeashPair((Player) entity, (LivingEntity) leashEntity));
                             }
-                        }
 
-                        LocationUtils.teleport(entity, destination);
+                            com.jcwhatever.nucleus.managed.teleport.Teleporter.teleport((Player)entity, adjusted);
+                        }
+                        else {
+                            entity.teleport(adjusted);
+                        }
                         relations = relations.passenger;
                     }
 
