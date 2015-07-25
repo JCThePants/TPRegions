@@ -24,11 +24,11 @@
 
 package com.jcwhatever.tpregions;
 
-import com.jcwhatever.tpregions.regions.TPRegion;
 import com.jcwhatever.nucleus.Nucleus;
-import com.jcwhatever.nucleus.regions.IRegion;
+import com.jcwhatever.nucleus.events.block.PlayerTransformBlockEvent;
 import com.jcwhatever.nucleus.providers.npc.Npcs;
-
+import com.jcwhatever.nucleus.regions.IRegion;
+import com.jcwhatever.tpregions.regions.TPRegion;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -50,8 +50,8 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import java.util.List;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class BukkitEventListener implements Listener {
 
@@ -75,7 +75,7 @@ public class BukkitEventListener implements Listener {
     @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     private void onBlockPhysics(BlockPhysicsEvent event) {
 
-        TPRegion region = getRegion(event.getBlock().getLocation());
+        TPRegion region = getRegion(event.getBlock().getLocation(PORTAL_LOCATION));
         if (region == null)
             return;
 
@@ -95,7 +95,7 @@ public class BukkitEventListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onBlockDamage(BlockDamageEvent event) {
 
-        TPRegion region = getRegion(event.getBlock().getLocation());
+        TPRegion region = getRegion(event.getBlock().getLocation(PORTAL_LOCATION));
         if (region != null && region.isEnabled())
             event.setCancelled(true);
     }
@@ -104,7 +104,16 @@ public class BukkitEventListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onBlockBreakEvent(BlockBreakEvent event) {
 
-        TPRegion region = getRegion(event.getBlock().getLocation());
+        TPRegion region = getRegion(event.getBlock().getLocation(PORTAL_LOCATION));
+        if (region != null && region.isEnabled())
+            event.setCancelled(true);
+    }
+
+    // prevent transforming portal blocks
+    @EventHandler(ignoreCancelled = true)
+    private void onTransformBlock(PlayerTransformBlockEvent event) {
+
+        TPRegion region = getRegion(event.getBlock().getLocation(PORTAL_LOCATION));
         if (region != null && region.isEnabled())
             event.setCancelled(true);
     }
@@ -114,7 +123,7 @@ public class BukkitEventListener implements Listener {
     private void onEntityExplode(EntityExplodeEvent event) {
 
         for (Block block : event.blockList()) {
-            TPRegion region = getRegion(block.getLocation());
+            TPRegion region = getRegion(block.getLocation(PORTAL_LOCATION));
 
             if (region != null && region.isEnabled()) {
                 event.setCancelled(true);
