@@ -140,7 +140,8 @@ public class BukkitEventListener implements Listener {
         if (entity instanceof Player && !Npcs.isNpc(entity))
             return;
 
-        if (Npcs.isNpc(entity) || entity.getPassenger() != null ||
+        if (PortalTeleporter.isTeleporting(entity) ||
+                Npcs.isNpc(entity) || entity.getPassenger() != null ||
                 (entity instanceof LivingEntity && ((LivingEntity) entity).isLeashed())) {
             event.setCancelled(true);
             return;
@@ -181,7 +182,8 @@ public class BukkitEventListener implements Listener {
         if (!event.isCancelled())
             return;
 
-        if (Teleporter.isCrossWorldTeleporting(event.getEntity()))
+        if (PortalTeleporter.isTeleporting(event.getEntity()) ||
+                PortalTeleporter.isCrossWorldTeleporting(event.getEntity()))
             event.setCancelled(false);
     }
 

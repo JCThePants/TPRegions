@@ -24,10 +24,9 @@
 
 package com.jcwhatever.tpregions.regions;
 
-import com.jcwhatever.tpregions.DestinationLocation;
-import com.jcwhatever.tpregions.ITPDestination;
-import com.jcwhatever.tpregions.TPRegions;
-import com.jcwhatever.tpregions.Teleporter;
+import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.providers.npc.Npcs;
+import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.Region;
 import com.jcwhatever.nucleus.regions.data.RegionShape;
 import com.jcwhatever.nucleus.regions.data.RegionShape.Flatness;
@@ -35,14 +34,14 @@ import com.jcwhatever.nucleus.regions.data.RegionShape.FlatnessPosition;
 import com.jcwhatever.nucleus.regions.data.RegionShape.ShapeDirection;
 import com.jcwhatever.nucleus.regions.options.EnterRegionReason;
 import com.jcwhatever.nucleus.regions.options.LeaveRegionReason;
-import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.storage.IDataNode;
-import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.MetaKey;
-import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.utils.PreCon;
-import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
-
+import com.jcwhatever.nucleus.utils.coords.LocationUtils;
+import com.jcwhatever.tpregions.DestinationLocation;
+import com.jcwhatever.tpregions.ITPDestination;
+import com.jcwhatever.tpregions.PortalTeleporter;
+import com.jcwhatever.tpregions.TPRegions;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -51,12 +50,12 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 /**
  * A teleport region.
@@ -226,13 +225,16 @@ public class TPRegion extends Region implements ITPDestination {
         if (sender == this)
             return;
 
+        if (PortalTeleporter.isTeleporting(entity))
+            return;
+
         Location destination = getDestination(sender, entity, yaw);
         if (destination == null)
             return;
 
         _received.add(id);
 
-        Teleporter.teleport(entity, destination);
+        PortalTeleporter.teleport(entity, destination);
     }
 
     public void openPortal() {

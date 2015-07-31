@@ -97,7 +97,7 @@ public class DestinationLocation extends Location implements ITPDestination {
         if (!destination.getChunk().isLoaded())
             destination.getChunk().load();
 
-        Teleporter.teleport(entity, destination);
+        PortalTeleporter.teleport(entity, destination);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.jcwhatever.tpregions;
 
+import com.jcwhatever.nucleus.collections.timed.TimedHashSet;
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
 import com.jcwhatever.nucleus.utils.LeashUtils;
 import com.jcwhatever.nucleus.utils.PreCon;
+import com.jcwhatever.nucleus.utils.TimeScale;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.nucleus.utils.entity.EntityUtils;
 import com.jcwhatever.nucleus.utils.player.PlayerStateSnapshot;
@@ -18,15 +20,24 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
 /*
  * 
  */
-public class Teleporter {
+public class PortalTeleporter {
 
     private static final Map<Entity, Void> _crossWorldTeleports = new WeakHashMap<>(10);
+    private static final Set<Entity> _teleported = new TimedHashSet<Entity>(
+            TPRegions.getPlugin(), 25, 5, TimeScale.TICKS);
+
+    public static boolean isTeleporting(Entity entity) {
+        PreCon.notNull(entity);
+
+        return _teleported.contains(entity);
+    }
 
     /**
      * Handles teleporting an entity to a destination.
@@ -176,14 +187,14 @@ public class Teleporter {
 
                             for (Entity leashEntity : leashed) {
                                 leashEntity.teleport(adjusted);
+                                _teleported.add(leashEntity);
                                 leashedPairs.add(new LeashPair((Player) entity, (LivingEntity) leashEntity));
                             }
 
-                            com.jcwhatever.nucleus.managed.teleport.Teleporter.teleport((Player)entity, adjusted);
                         }
-                        else {
-                            entity.teleport(adjusted);
-                        }
+
+                        entity.teleport(adjusted);
+                        _teleported.add(entity);
                         relations = relations.passenger;
                     }
 
