@@ -94,7 +94,7 @@ public class TPRegion extends Region implements ITPDestination {
 
         _received = new HashSet<>(5);
 
-        getMeta().set(REGION_META_KEY, this);
+        getMeta().setKey(REGION_META_KEY, this);
     }
 
     /**
