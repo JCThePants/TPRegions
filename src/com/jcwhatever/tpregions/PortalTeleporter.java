@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -160,9 +161,9 @@ public class PortalTeleporter {
                     EntityRelations relations = EntityRelations.this;
 
                     boolean isWorldChange = !entity.getWorld().equals(destination.getWorld());
-                    final LinkedList<Entity> entities = new LinkedList<>();
-                    final LinkedList<LeashPair> leashedPairs = new LinkedList<>();
-                    final LinkedList<PlayerStateSnapshot> snapshots = new LinkedList<>();
+                    final Deque<Entity> entities = new LinkedList<>();
+                    final Deque<LeashPair> leashedPairs = new LinkedList<>();
+                    final Deque<PlayerStateSnapshot> snapshots = new LinkedList<>();
 
                     while (relations.entity != null) {
 
