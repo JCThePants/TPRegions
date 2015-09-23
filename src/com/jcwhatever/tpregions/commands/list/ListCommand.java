@@ -73,7 +73,7 @@ public class ListCommand extends AbstractCommand implements IExecutableCommand {
 
         int page = args.getInteger("page");
 
-        ChatPaginator pagin = new ChatPaginator(TPRegions.getPlugin(), 6, Lang.get(_PAGINATOR_TITLE));
+        ChatPaginator pagin = createPagin(args, 6, Lang.get(_PAGINATOR_TITLE));
 
         List<TPRegion> regions = TPRegions.getRegionManager().getRegions();
 
