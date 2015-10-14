@@ -25,6 +25,7 @@
 package com.jcwhatever.tpregions.regions;
 
 import com.jcwhatever.nucleus.managed.scheduler.Scheduler;
+import com.jcwhatever.nucleus.managed.teleport.Teleporter;
 import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.providers.regionselect.IRegionSelection;
 import com.jcwhatever.nucleus.regions.Region;
@@ -40,7 +41,6 @@ import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.coords.LocationUtils;
 import com.jcwhatever.tpregions.DestinationLocation;
 import com.jcwhatever.tpregions.ITPDestination;
-import com.jcwhatever.tpregions.PortalTeleporter;
 import com.jcwhatever.tpregions.TPRegions;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -225,7 +225,7 @@ public class TPRegion extends Region implements ITPDestination {
         if (sender == this)
             return;
 
-        if (PortalTeleporter.isTeleporting(entity))
+        if (Teleporter.isTeleporting(entity))
             return;
 
         Location destination = getDestination(sender, entity, yaw);
@@ -234,7 +234,8 @@ public class TPRegion extends Region implements ITPDestination {
 
         _received.add(id);
 
-        PortalTeleporter.teleport(entity, destination);
+        Teleporter.teleport(entity, destination);
+        //PortalTeleporter.teleport(entity, destination);
     }
 
     public void openPortal() {

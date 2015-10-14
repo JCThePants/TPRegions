@@ -24,6 +24,7 @@
 
 package com.jcwhatever.tpregions;
 
+import com.jcwhatever.nucleus.managed.teleport.Teleporter;
 import com.jcwhatever.nucleus.utils.PreCon;
 import com.jcwhatever.nucleus.utils.text.TextUtils;
 
@@ -97,7 +98,8 @@ public class DestinationLocation extends Location implements ITPDestination {
         if (!destination.getChunk().isLoaded())
             destination.getChunk().load();
 
-        PortalTeleporter.teleport(entity, destination);
+        Teleporter.teleport(entity, destination);
+        //PortalTeleporter.teleport(entity, destination);
     }
 
     @Override

@@ -26,6 +26,7 @@ package com.jcwhatever.tpregions;
 
 import com.jcwhatever.nucleus.Nucleus;
 import com.jcwhatever.nucleus.events.block.PlayerTransformBlockEvent;
+import com.jcwhatever.nucleus.managed.teleport.Teleporter;
 import com.jcwhatever.nucleus.providers.npc.Npcs;
 import com.jcwhatever.nucleus.regions.IRegion;
 import com.jcwhatever.tpregions.regions.TPRegion;
@@ -140,7 +141,7 @@ public class BukkitEventListener implements Listener {
         if (entity instanceof Player && !Npcs.isNpc(entity))
             return;
 
-        if (PortalTeleporter.isTeleporting(entity) ||
+        if (Teleporter.isTeleporting(entity) ||
                 Npcs.isNpc(entity) || entity.getPassenger() != null ||
                 (entity instanceof LivingEntity && ((LivingEntity) entity).isLeashed())) {
             event.setCancelled(true);
@@ -182,8 +183,8 @@ public class BukkitEventListener implements Listener {
         if (!event.isCancelled())
             return;
 
-        if (PortalTeleporter.isTeleporting(event.getEntity()) ||
-                PortalTeleporter.isCrossWorldTeleporting(event.getEntity()))
+        if (Teleporter.isTeleporting(event.getEntity()) ||
+                Teleporter.isCrossWorldTeleporting(event.getEntity()))
             event.setCancelled(false);
     }
 
